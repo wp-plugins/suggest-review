@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.0.0
+ * @version 1.0.1
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://www.svvsd.org
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.0.0
+Version: 1.0.1
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ if (!class_exists("SuggestReview")) {
 			$suggestReviewAdminOptions = array('allow_unregistered' => 'false',
 				'send_email_to_author' => 'true', 
 				'add_update_date_to_posts' => 'true',
-				'address_for_digest_email' => '');
+				'address_for_digest_email' => '',
+				'excluded_ids' => '');
 			$devOptions = get_option($this->adminOptionsName);
 			if (!empty($devOptions)) {
 				foreach ($devOptions as $key => $option)
@@ -100,9 +101,11 @@ View the content at: '.get_permalink());
 					$return .= '<p>Last updated by '.$lastupdatedby[0].' on '.$lastupdated[0].'</p>';
 				}
 
+				$excludedIDs = explode( ',', $devOptions['exclude_ids']);
+				$excluded = in_array( $my_post_id, $excludedIDs);
 				$needsReview = get_post_meta( $my_post_id, 'suggestreview_needed' );
 				//If this has been marked for review
-				if ( ! empty($needsReview) && $needsReview[0] == "true" ) {
+				if ( ! empty($needsReview) && $needsReview[0] == "true" && ! $excluded ) {
 					$markedbyuser = get_post_meta( $my_post_id, 'suggestreview_by' );
 					$markedbydate = get_post_meta( $my_post_id, 'suggestreview_date' );
 					$return .= '<p>The above was flagged for review by ';
@@ -113,12 +116,18 @@ View the content at: '.get_permalink());
 				//If not marked for review
 				} else {
 					//Can guests mark it?
-					if ($devOptions['allow_unregistered'] == "true") {
-						$return .= '<p><form method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input type="submit" value="Suggest review"> Flag this information for review. Please leave a comment explaining why.</p>';
+					if ($devOptions['allow_unregistered'] == "true" ) {
+						//Guests can mark, is it excluded?
+						if ( ! $excluded ) {
+							$return .= '<p><form method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input type="submit" value="Suggest review"> Flag this information for review. Please leave a comment explaining why.</p>';
+						}
 					} else {
 						//If guests can't mark, is anyone logged in?
 						if ( is_user_logged_in() ) {
-							$return .= '<p><form method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input type="submit" value="Suggest review"> Flag this information for review. Please leave a comment explaining why.</p>';
+							//User is logged in, is it excluded?
+							if ( ! $excluded ) {
+								$return .= '<p><form method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input type="submit" value="Suggest review"> Flag this information for review. Please leave a comment explaining why.</p>';
+							}
 						}
 					}
 				}
@@ -146,6 +155,9 @@ View the content at: '.get_permalink());
 				if ( isset($_POST['suggestReviewAddressForDigest']) ) {
 					$devOptions['address_for_digest_email'] = apply_filters('content_save_pre', $_POST['suggestReviewAddressForDigest']);
 				}
+				if ( isset($_POST['suggestReviewIDsToExclude']) ) {
+					$devOptions['exclude_ids'] = apply_filters('content_save_pre', $_POST['suggestReviewIDsToExclude']);
+				}
 				update_option($this->adminOptionsName, $devOptions);
 
 				?>
@@ -168,6 +180,10 @@ View the content at: '.get_permalink());
 
 <h3>Add last update date to end of posts</h3>
 <p><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="true" <?php if ($devOptions['add_update_date_to_posts'] == "true") { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="false" <?php if ($devOptions['add_update_date_to_posts'] == "false") { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
+
+<h3>Page, post IDs to exclude</h3>
+<p>This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show if that option is selected.<br>
+<input type="text" name="suggestReviewIDsToExclude" style="width: 500px;" value="<?php _e(apply_filters('format_to_edit',$devOptions['exclude_ids']), 'SuggestReview') ?>"></p>
 
 <div class="submit">
 <input type="submit" name="update_suggestReviewSettings" value="<?php _e('Update Settings', 'SuggestReview') ?>" /></div>
