@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 3.5.2
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,10 @@ checked; the assumption is that you are editing the content to resolve a review 
 
 == Changelog ==
 
+= 1.1.0 =
+* Added ability to change text for emails to authors and digest email
+* Added link to plugin settings from the admin plugin listing
+
 = 1.0.1 =
 * Added exclude posts by IDs option
 
@@ -55,4 +59,8 @@ checked; the assumption is that you are editing the content to resolve a review 
 
 == Upgrade Notice ==
 
-== Arbitrary section ==
+= 1.1.0 =
+New features. Upgrade recommended.
+
+= 1.0.1 =
+New features. Upgrade optional.
