@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 3.5.2
-Stable tag: 1.0.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,6 +19,7 @@ a while and is now out of date, a user can let you know that you need to update 
 * Weekly, an email listing all of the review suggestions will be sent to a list of email addresses.
 * Can be configured to allow guests to mark items for review.
 * Can also be configured to put the last update date to the end of each post.
+* Exclude the suggest review button by IDs of pages, posts
 
 Neither the mark for review button or last update date will appear on list of post pages or search results.
 
@@ -46,9 +47,29 @@ checked; the assumption is that you are editing the content to resolve a review 
 
 == Changelog ==
 
+= 1.2.0 =
+* When submitting comments, the review flag was always set and comments would be lost. This is now fixed.
+* Changed the_content filter priority to interact better with other plugins.
+* Added comment field directly to plugin so that comments are separate from post comments.
+* Changed time of mark and last update to use local time instead of UTC.
+
+= 1.1.0 =
+* Added ability to change text for emails to authors and digest email
+* Added link to plugin settings from the admin plugin listing
+
+= 1.0.1 =
+* Added exclude posts by IDs option
+
 = 1.0.0 =
 * Initial version.
 
 == Upgrade Notice ==
 
-== Arbitrary section ==
+= 1.2.0 =
+Fixed serious bug with comments and the review flag. Everyone should upgrade.
+
+= 1.1.0 =
+New features. Upgrade recommended.
+
+= 1.0.1 =
+New features. Upgrade optional.
