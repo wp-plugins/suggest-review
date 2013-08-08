@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 3.5.2
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,12 @@ checked; the assumption is that you are editing the content to resolve a review 
 
 == Changelog ==
 
+= 1.2.0 =
+* When submitting comments, the review flag was always set and comments would be lost. This is now fixed.
+* Changed the_content filter priority to interact better with other plugins.
+* Added comment field directly to plugin so that comments are separate from post comments.
+* Changed time of mark and last update to use local time instead of UTC.
+
 = 1.1.0 =
 * Added ability to change text for emails to authors and digest email
 * Added link to plugin settings from the admin plugin listing
@@ -58,6 +64,9 @@ checked; the assumption is that you are editing the content to resolve a review 
 * Initial version.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Fixed serious bug with comments and the review flag. Everyone should upgrade.
 
 = 1.1.0 =
 New features. Upgrade recommended.

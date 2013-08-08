@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.1.0
+ * @version 1.2.0
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.1.0
+Version: 1.1.2
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ if ( ! class_exists( "SuggestReview" ) ) {
 
 Title: [post_title]
 Suggested by: [suggesting_user_login]
+Comment: [comment]
 
 View the content at: [permalink]'
 				,'add_update_date_to_posts' => 'true'
@@ -67,10 +68,11 @@ Link: [permalink]');
 		}
 
 		//Do the actual marking in the meta table and send an email if option enabled
-		function markForReview( $post_id, $marking_user = '', $marking_date, $author ) {
+		function markForReview( $post_id, $marking_user = '', $marking_date, $comment, $author ) {
 			update_post_meta( $post_id, 'suggestreview_needed', 'true' );
 			update_post_meta( $post_id, 'suggestreview_by', $marking_user );
 			update_post_meta( $post_id, 'suggestreview_date', $marking_date );
+			update_post_meta( $post_id, 'suggestreview_comment', $comment );
 			$devOptions = get_option( $this->adminOptionsName );
 
 			if ( $devOptions['send_email_to_author'] == "true" ) {
@@ -103,10 +105,10 @@ Link: [permalink]');
 			//Check to see if the URL is a permalink, if not, we aren't doing anything
 			//This prevents the suggest review button from appear on search results and post lists
 			if ( "https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] == get_permalink() ) {
-			
-				if ( isset( $_POST['suggestreview'] ) && isset( $_POST['suggestreviewid'] ) && $_POST['suggestreviewid'] == $my_post_id ) {
-					$this->markForReview( $_POST['suggestreviewid'], $my_user->user_login, date("Y-m-d H:i:s"), $my_author );
-				} else if ( isset( $_POST['resolvereview'] ) && isset( $_POST['resolvereviewid'] ) && $_POST['resolvereviewid'] == $my_post_id && $my_user->user_login == $my_author ) {
+
+				if ( isset( $_POST['suggestreview'] ) && $_POST['suggestreview'] == '1' && isset( $_POST['suggestreviewid'] ) && $_POST['suggestreviewid'] == $my_post_id ) {
+					$this->markForReview( $_POST['suggestreviewid'], $my_user->user_login, date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ), $_POST['suggestreviewcomment'], $my_author );
+				} else if ( isset( $_POST['resolvereview'] ) && $_POST['resolvereview'] == '1' && isset( $_POST['resolvereviewid'] ) && $_POST['resolvereviewid'] == $my_post_id ) {
 					$this->resolveMarkForReview( $_POST['resolvereviewid'] );
 				}
 
@@ -124,25 +126,78 @@ Link: [permalink]');
 				if ( ! empty($needsReview) && $needsReview[0] == "true" && ! $excluded ) {
 					$markedbyuser = get_post_meta( $my_post_id, 'suggestreview_by' );
 					$markedbydate = get_post_meta( $my_post_id, 'suggestreview_date' );
+					$markedbycomment = get_post_meta( $my_post_id, 'suggestreview_comment' );
 					$return .= '<p>The above was flagged for review by ';
 					$return .= $markedbyuser[0];
 					$return .= ' on ';
 					$return .= $markedbydate[0];
-					$return .= '</p>';
+					$return .= '<br>Comment: <em>';
+					$return .= $markedbycomment[0];
+					$return .= '</em></p>';
 				//If not marked for review
 				} else {
 					//Can guests mark it?
 					if ($devOptions['allow_unregistered'] == "true" ) {
 						//Guests can mark, is it excluded?
 						if ( ! $excluded ) {
-							$return .= '<p><form method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input type="submit" value="Suggest review"> Flag this information for review. Please leave a comment explaining why.</p>';
+							//Be advised this same stuff should appear here and just below, so if you change one, change both!
+							$return .= '<div><p><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+
+<div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
+<form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
+<textarea rows="4" name="suggestreviewcomment" style="width:85%; margin-top:-5px; margin-bottom:3px;"></textarea>
+</form>
+<p><button id="SuggestReviewCancelButton" style="float:left;">Cancel</button><button id="SuggestReviewSubmitButton" style="float:left; margin-left:50px;">Submit</button></p><br><br>
+</div>
+
+<script>
+jQuery( "#SuggestReviewButton").click(function(e){
+		e.preventDefault;
+		jQuery("#SuggestReviewComment").toggle();
+		jQuery("#SuggestReviewButton").toggle();
+	});
+jQuery( "#SuggestReviewCancelButton").click(function(e){
+		e.preventDefault;
+		jQuery("#SuggestReviewComment").toggle();
+		jQuery("#SuggestReviewButton").toggle();
+	});
+jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
+        e.preventDefault;
+        jQuery("#SuggestReviewRealSubmitButton").click();
+    });
+</script>';
 						}
 					} else {
 						//If guests can't mark, is anyone logged in?
 						if ( is_user_logged_in() ) {
 							//User is logged in, is it excluded?
 							if ( ! $excluded ) {
-								$return .= '<p><form method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input type="submit" value="Suggest review"> Flag this information for review. Please leave a comment explaining why.</p>';
+								//Be advised this same stuff should appear here and just above, so if you change one, change both!
+								$return .= '<div><p><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+
+<div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
+<form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
+<textarea rows="4" name="suggestreviewcomment" style="width:85%; margin-top:-5px; margin-bottom:3px;"></textarea>
+</form>
+<p><button id="SuggestReviewCancelButton" style="float:left;">Cancel</button><button id="SuggestReviewSubmitButton" style="float:left; margin-left:50px;">Submit</button><br></p>
+</div>
+
+<script>
+jQuery( "#SuggestReviewButton").click(function(e){
+		e.preventDefault;
+		jQuery("#SuggestReviewComment").toggle();
+		jQuery("#SuggestReviewButton").toggle();
+	});
+jQuery( "#SuggestReviewCancelButton").click(function(e){
+		e.preventDefault;
+		jQuery("#SuggestReviewComment").toggle();
+		jQuery("#SuggestReviewButton").toggle();
+	});
+jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
+        e.preventDefault;
+        jQuery("#SuggestReviewRealSubmitButton").click();
+    });
+</script>';
 							}
 						}
 					}
@@ -266,6 +321,7 @@ Link: [permalink]');
         <tr><td style="float:right;"><code><strong>[suggesting_user_firstname]</strong></code></td><td><?php _e('The first name of the user who flagged the item', 'suggest-review' ); ?></td></tr>
         <tr><td style="float:right;"><code><strong>[suggesting_user_lastname]</strong></code></td><td><?php _e('The last name of the user who flagged the item', 'suggest-review' ); ?></td></tr>
         <tr><td style="float:right;"><code><strong>[suggesting_user_display_name]</strong></code></td><td><?php _e('The display name of the user who flagged the item', 'suggest-review' ); ?></td></tr>
+        <tr><td style="float:right;"><code><strong>[comment]</strong></code></td><td><?php _e('The comment from the user who flagged the item', 'suggest-review' ); ?></td></tr>
         <tr><td style="float:right;"><code><strong>[author_login]</strong></code></td><td><?php _e('The login name of the post author', 'suggest-review' ); ?></td></tr>
         <tr><td style="float:right;"><code><strong>[author_email]</strong></code></td><td><?php _e('The email address of the post author', 'suggest-review' ); ?></td></tr>
         <tr><td style="float:right;"><code><strong>[author_firstname]</strong></code></td><td><?php _e('The first name of the post author', 'suggest-review' ); ?></td></tr>
@@ -337,10 +393,10 @@ function updateLastUpdated( $post_id ) {
 	if ( isset($_POST['suggestReview_resolveflag']) ) {
 		update_post_meta( $post_id, 'suggestreview_needed', 'false' );
 		update_post_meta( $post_id, 'suggestreview_by', $my_user->user_login );
-		update_post_meta( $post_id, 'suggestreview_date', date("Y-m-d H:i:s") );
+		update_post_meta( $post_id, 'suggestreview_date', date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ) );
 	}
 
-	update_post_meta( $post_id, 'suggestreview_lastupdated', date("Y-m-d H:i:s") );
+	update_post_meta( $post_id, 'suggestreview_lastupdated', date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ) );
 	update_post_meta( $post_id, 'suggestreview_lastupdatedby', $my_user->user_login );
 	return true;
 }
@@ -416,6 +472,7 @@ function replaceTokens( $text, $post_id ) {
 	//Get meta
 	$marking_user_login = get_post_meta( $post_id, 'suggestreview_by');
 	$marked_date = get_post_meta( $post_id, 'suggestreview_date' );
+	$marked_comment = get_post_meta( $post_id, 'suggestreview_comment' );
 	$permalink = get_permalink( $post_id );
 
 	//Setup suggesting user
@@ -447,7 +504,8 @@ function replaceTokens( $text, $post_id ) {
 					'[post_title]' => $post->post_title,
 					'[post_date]' => $post->post_date,
 					'[post_modified]' => $post->post_modified,
-					'[permalink]' => $permalink
+					'[permalink]' => $permalink,
+					'[comment]' => $marked_comment[0]
 					);
 
 	foreach ( $tokens as $key => $value ) {
@@ -463,7 +521,7 @@ if ( isset( $svvsd_suggestReview ) ) {
 	register_deactivation_hook( __FILE__, 'my_deactivation' );
 
 	//Filters
-	add_filter( 'the_content', array( &$svvsd_suggestReview, 'content_insertion' ), 1 );
+	add_filter( 'the_content', array( &$svvsd_suggestReview, 'content_insertion' ), 10 );
 	add_filter( 'cron_schedules', 'my_add_weekly' );
 	add_filter( 'plugin_action_links_' . plugin_basename( plugin_dir_path( __FILE__ ) . 'suggest-review.php' ), array( &$svvsd_suggestReview, 'settings_link' ) );
 
