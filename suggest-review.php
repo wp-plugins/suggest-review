@@ -8,7 +8,7 @@ Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.1.2
+Version: 1.2.0
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
