@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 3.6
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,11 +41,17 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 1. Example of a post that has been flagged for review. Also shows the 'last updated' option.
 2. If content hasn't been marked for review, the user sees this button.
-3. When editing a post, if it has been suggested for review, this meta box will appear. The checkbox is automatically
-checked; the assumption is that you are editing the content to resolve a review suggestion.
-4. Options page.
+3. When the button is clicked, it changes to a text box with submit and cancel buttons.
+4. When editing a post, if it has been suggested for review, this meta box will appear. The checkbox is automatically
+checked; the assumption is that you are editing the content to resolve a review suggestion. Also note the radio button
+that allows you to exclude a post while you are editing, rather than entering them directly into the admin options.
+5. Options page.
 
 == Changelog ==
+
+= 1.2.1 =
+* Added checkbox to set a page or post to be excluded while editing that page or post. This allows non-admin users
+to exclude things without asking an admin to do it.
 
 = 1.2.0 =
 * When submitting comments, the review flag was always set and comments would be lost. This is now fixed.

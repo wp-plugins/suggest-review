@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.0
+ * @version 1.2.1
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.0
+Version: 1.2.1
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -374,39 +374,71 @@ function add_markresolve_box() {
 }
 
 function render_meta_box_content( $post ) {
+	global $svvsd_suggestReview;
 	$needsReview = get_post_meta( $post->ID, 'suggestreview_needed' );
 	if ( ! empty( $needsReview ) && $needsReview[0] == 'true' ) {
 		$markedbyuser = get_post_meta( $post->ID, 'suggestreview_by' );
 		$markedbydate = get_post_meta( $post->ID, 'suggestreview_date' );
-		echo "<p>Review suggested by $markedbyuser[0] on $markedbydate[0]</p>";
-		echo '<label for="suggestReview_resolveflag"><input type="checkbox" id="suggestReview_resolveflag" name="suggestReview_resolveflag" value="suggestReview_resolveflag" checked /> Remove this flag</label>';
+		echo "<p>Review suggested by $markedbyuser[0] on $markedbydate[0]<br>";
+		echo '<label for="suggestReview_resolveflag"><input type="checkbox" id="suggestReview_resolveflag" name="suggestReview_resolveflag" value="suggestReview_resolveflag" checked /> Remove this flag</label></p>';
 	} else {
 		echo '<p>This post has not been suggested for review.</p>';
-		?><!-- in render_meta_box_content false statement--><?php
 	}
+	$devOptions = $svvsd_suggestReview->getAdminOptions();
+	$excludedIDs = explode( ',', $devOptions['exclude_ids']);
+	$excluded = in_array( $post->ID, $excludedIDs);
+	echo '<p>Exclude from suggest review <label for="suggestReview_excludeflag_yes"><input type="radio" id="suggestReview_excludeflag_yes" name="suggestReview_excludeflag" value="true"';
+	if ( $excluded ) {
+		echo ' checked';
+	}
+	echo ' /> Yes </label>';
+	echo '<label for="suggestReview_excludeflag_no"><input type="radio" id="suggestReview_excludeflag_no" name="suggestReview_excludeflag" value="false"';
+	if ( !$excluded ) {
+		echo ' checked';
+	}
+	echo ' /> No</label></p>';
 	return true;
 }
 
-function updateLastUpdated( $post_id ) {
+function suggestReviewUpdatePost( $post_id ) {
+	global $svvsd_suggestReview;
 	$my_user = wp_get_current_user();
+	$devOptions = $svvsd_suggestReview->getAdminOptions();
+	$excludedIDs = explode( ',', $devOptions['exclude_ids']);
+	$excluded = in_array( $post_id, $excludedIDs);
 
-	if ( isset($_POST['suggestReview_resolveflag']) ) {
+	if ( isset( $_POST['suggestReview_resolveflag'] ) ) {
 		update_post_meta( $post_id, 'suggestreview_needed', 'false' );
 		update_post_meta( $post_id, 'suggestreview_by', $my_user->user_login );
 		update_post_meta( $post_id, 'suggestreview_date', date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ) );
 	}
-
+	if ( isset( $_POST['suggestReview_excludeflag'] ) && $_POST['suggestReview_excludeflag'] == "true" ) {
+		if ( !$excluded ) {
+			$devOptions['exclude_ids'] = $devOptions['exclude_ids'] . "," . $post_id;
+			$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $devOptions['exclude_ids'] );
+			update_option($svvsd_suggestReview->adminOptionsName, $devOptions);
+		}
+	} else if ( isset( $_POST['suggestReview_excludeflag'] ) && $_POST['suggestReview_excludeflag'] == "false" ) {
+		if ( $excluded ) {
+			while( ( $key = array_search( $post_id, $excludedIDs ) ) !== false ) {
+			    unset( $excludedIDs[$key] );
+			}
+			$devOptions['exclude_ids'] = implode( ",", $excludedIDs );
+			$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $devOptions['exclude_ids'] );
+			update_option($svvsd_suggestReview->adminOptionsName, $devOptions);
+		}
+	}
 	update_post_meta( $post_id, 'suggestreview_lastupdated', date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ) );
 	update_post_meta( $post_id, 'suggestreview_lastupdatedby', $my_user->user_login );
 	return true;
 }
 
-function my_activation() {
+function suggestReviewActivation() {
 	wp_schedule_event( time(), 'weekly', 'suggestreviewdigest');
 //	wp_schedule_event( time(), 'quarterhourly', 'suggestreviewdigest');
 }
 
-function my_deactivation() {
+function suggestReviewDeactivation() {
 	wp_clear_scheduled_hook('suggestreviewdigest');
 }
 
@@ -517,8 +549,8 @@ function replaceTokens( $text, $post_id ) {
 
 //Actions and Filters
 if ( isset( $svvsd_suggestReview ) ) {
-	register_activation_hook( __FILE__, 'my_activation' );
-	register_deactivation_hook( __FILE__, 'my_deactivation' );
+	register_activation_hook( __FILE__, 'suggestReviewActivation' );
+	register_deactivation_hook( __FILE__, 'suggestReviewDeactivation' );
 
 	//Filters
 	add_filter( 'the_content', array( &$svvsd_suggestReview, 'content_insertion' ), 10 );
@@ -529,7 +561,7 @@ if ( isset( $svvsd_suggestReview ) ) {
 	add_action( 'admin_menu', 'suggestReview_ap' );
 	add_action( 'activate_suggest_review/suggest-review.php',  array( &$svvsd_suggestReview, 'init' ) );
 	add_action( 'add_meta_boxes', 'add_markresolve_box' );
-	add_action( 'save_post', 'updateLastUpdated' );
+	add_action( 'save_post', 'suggestReviewUpdatePost' );
 	add_action( 'suggestreviewdigest', 'digest_email' );
 }
 ?>
