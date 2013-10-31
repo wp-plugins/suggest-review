@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.1
+ * @version 1.2.2
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.1
+Version: 1.2.2
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -219,7 +219,112 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 
 		}
 
+		//Add the custom Bulk Action to the select menus. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		// Since 1.2.2
+		function custom_bulk_admin_footer() {
+			global $post_type;
+			
+			if($post_type == 'post') {
+				?>
+					<script type="text/javascript">
+						jQuery(document).ready(function() {
+							jQuery('<option>').val('exclude').text('<?php _e('Exclude from SuggestReview')?>').appendTo("select[name='action']");
+							jQuery('<option>').val('exclude').text('<?php _e('Exclude from SuggestReview')?>').appendTo("select[name='action2']");
+						});
+					</script>
+				<?php
+	    	}
+		}
+
+		//Handles the custom Bulk Action. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		//Since 1.2.2
+		function custom_bulk_action() {
+			global $typenow;
+			$post_type = $typenow;
+
+			if($post_type == 'post') {
+				// get the action
+				$wp_list_table = _get_list_table('WP_Posts_List_Table');  // depending on your resource type this could be WP_Users_List_Table, WP_Comments_List_Table, etc
+				$action = $wp_list_table->current_action();
+
+				$allowed_actions = array("exclude");
+				if(!in_array($action, $allowed_actions)) return;
+				
+				// security check
+				check_admin_referer('bulk-posts');
+
+				// make sure ids are submitted.  depending on the resource type, this may be 'media' or 'ids'
+				if(isset($_GET['post'])) {
+					$post_ids = array_map('intval', $_GET['post']);
+				}
+				if(empty($post_ids)) return;
+				
+				// this is based on wp-admin/edit.php
+				$sendback = remove_query_arg( array('excluded', 'untrashed', 'deleted', 'ids'), wp_get_referer() );
+				if ( ! $sendback )
+					$sendback = admin_url( "edit.php?post_type=$post_type" );
+				
+				$pagenum = $wp_list_table->get_pagenum();
+				$sendback = add_query_arg( 'paged', $pagenum, $sendback );
+
+				switch($action) {
+					case 'exclude':
+						
+						// if we set up user permissions/capabilities, the code might look like:
+						//if ( !current_user_can($post_type_object->cap->exclude_post, $post_id) )
+						//	wp_die( __('You are not allowed to exclude this post.') );
+						
+						$excluded = 0;
+						foreach( $post_ids as $post_id ) {
+
+							if ( !$this->perform_exclusion($post_id) )
+								wp_die( __('Error excluding post.') );
+			
+							$excluded++;
+						}
+						
+						$sendback = add_query_arg( array('excluded' => $excluded, 'ids' => join(',', $post_ids) ), $sendback );
+					break;
+					
+					default: return;
+				}
+				
+				$sendback = remove_query_arg( array('action', 'action2', 'tags_input', 'post_author', 'comment_status', 'ping_status', '_status',  'post', 'bulk_edit', 'post_view'), $sendback );
+				
+				wp_redirect($sendback);
+				exit();
+			}
+		}
+
+		//Displays notice on admin page after bulk excluding. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		//Since 1.2.2
+		function custom_bulk_admin_notices() {
+			global $post_type, $pagenow;
+			
+			if($pagenow == 'edit.php' && $post_type == 'post' && isset($_GET['excluded']) && (int) $_GET['excluded']) {
+				$message = sprintf( _n( 'Post excluded from SuggestReview.', '%s posts excluded from SuggestReview.', $_GET['excluded'] ), number_format_i18n( $_GET['excluded'] ) );
+				echo "<div class=\"updated\"><p>{$message}</p></div>";
+			}
+		}
+		
+		//Actually does the exclusion for bulk exclude. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		//Since 1.2.2
+		function perform_exclusion($post_id) {
+			$devOptions = $this->getAdminOptions();
+			$excludedIDs = explode( ',', $devOptions['exclude_ids']);
+			$is_excluded = in_array( $post_id, $excludedIDs);
+
+			if ( !$is_excluded ) {
+				$devOptions['exclude_ids'] = $devOptions['exclude_ids'] . "," . $post_id;
+				$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $devOptions['exclude_ids'] );
+				update_option($this->adminOptionsName, $devOptions);
+			}
+
+			return true;
+		}
+
 		//Prints out the admin page
+		//Since 1.0.0
 		function printAdminPage() {
 
 			$devOptions = $this->getAdminOptions();
@@ -563,5 +668,9 @@ if ( isset( $svvsd_suggestReview ) ) {
 	add_action( 'add_meta_boxes', 'add_markresolve_box' );
 	add_action( 'save_post', 'suggestReviewUpdatePost' );
 	add_action( 'suggestreviewdigest', 'digest_email' );
+	add_action( 'admin_footer-edit.php', array( &$svvsd_suggestReview, 'custom_bulk_admin_footer' ) );
+	add_action( 'load-edit.php', array( &$svvsd_suggestReview, 'custom_bulk_action' ) );
+	add_action( 'admin_notices', array( &$svvsd_suggestReview, 'custom_bulk_admin_notices' ) );
+
 }
 ?>
