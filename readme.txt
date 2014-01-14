@@ -3,8 +3,8 @@ Contributors: george_michael
 Donate link: 
 Tags: 
 Requires at least: 3.5.2
-Tested up to: 3.6.1
-Stable tag: 1.2.1
+Tested up to: 3.8.0
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,9 +47,14 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 == Changelog ==
 
+= 1.2.3 =
+* Changed option for adding last update stamp to posts. You can now select "Yes, if not in exclusion list".
+
+= 1.2.2 =
+* Added bulk action option to exclude posts (and only posts at this time) from SR.
+
 = 1.2.1 =
-* Added checkbox to set a page or post to be excluded while editing that page or post. This allows non-admin users
-to exclude things without asking an admin to do it.
+* Added checkbox to set a page or post to be excluded while editing that page or post. This allows non-admin users to exclude things without asking an admin to do it.
 
 = 1.2.0 =
 * When submitting comments, the review flag was always set and comments would be lost. This is now fixed.
@@ -68,6 +73,12 @@ to exclude things without asking an admin to do it.
 * Initial version.
 
 == Upgrade Notice ==
+
+= 1.2.3 =
+New option. Upgrade optional.
+
+= 1.2.2 =
+Useful new feature. Upgrade recommended.
 
 = 1.2.1 =
 New option when editing a post. Upgrade recommended.
