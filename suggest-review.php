@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.2
+ * @version 1.2.3
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.2
+Version: 1.2.3
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ Suggested by: [suggesting_user_login]
 Comment: [comment]
 
 View the content at: [permalink]'
-				,'add_update_date_to_posts' => 'true'
+				,'add_update_date_to_posts' => 1 // 1 for yes, 2 for yes if not excluded, 0 for no. Since 1.2.3
 				,'excluded_ids' => ''
 				,'address_for_digest_email' => ''
 				,'subject_for_digest_email' => 'Blog content flagged for review'
@@ -112,16 +112,17 @@ Link: [permalink]');
 					$this->resolveMarkForReview( $_POST['resolvereviewid'] );
 				}
 
+				$excludedIDs = explode( ',', $devOptions['exclude_ids']);
+				$excluded = in_array( $my_post_id, $excludedIDs);
+				$needsReview = get_post_meta( $my_post_id, 'suggestreview_needed' );
+
 				//See if we should put in the last update time
-				if ( $devOptions['add_update_date_to_posts'] == 'true' ) {
+				if ( $devOptions['add_update_date_to_posts'] == 1 || ( $devOptions['add_update_date_to_posts'] == 2 && ! $excluded ) ) {
 					$lastupdated = get_post_meta( $my_post_id, 'suggestreview_lastupdated' );
 					$lastupdatedby = get_post_meta( $my_post_id, 'suggestreview_lastupdatedby' );
 					$return .= '<p>Last updated by '.$lastupdatedby[0].' on '.$lastupdated[0].'</p>';
 				}
 
-				$excludedIDs = explode( ',', $devOptions['exclude_ids']);
-				$excluded = in_array( $my_post_id, $excludedIDs);
-				$needsReview = get_post_meta( $my_post_id, 'suggestreview_needed' );
 				//If this has been marked for review
 				if ( ! empty($needsReview) && $needsReview[0] == "true" && ! $excluded ) {
 					$markedbyuser = get_post_meta( $my_post_id, 'suggestreview_by' );
@@ -388,10 +389,10 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
     <textarea rows="4" name="suggestReviewBodyForEmailToAuthor" style="width:100%;"><?php _e(apply_filters('format_to_edit',$devOptions['body_for_email_to_author']), 'SuggestReview') ?></textarea></p>
 
     <h3 style="margin-bottom:0">Add last update date to end of posts</h3>
-    <p style="margin-top:0"><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="true" <?php if ($devOptions['add_update_date_to_posts'] == "true") { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="false" <?php if ($devOptions['add_update_date_to_posts'] == "false") { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
+    <p style="margin-top:0"><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="1" <?php if ($devOptions['add_update_date_to_posts'] == 1) { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_yesifnot"><input type="radio" id="suggestReviewAddUpdateDate_yesifnot" name="suggestReviewAddUpdateDate" value="2" <?php if ($devOptions['add_update_date_to_posts'] == 2) { _e('checked="checked"', "SuggestReview"); }?> /> Yes, if not in exclusion list</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="0" <?php if ($devOptions['add_update_date_to_posts'] == 0) { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
 
     <h3 style="margin-bottom:0">Page, post IDs to exclude</h3>
-    <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show if that option is selected.<br>
+    <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show, depending on the above option.<br>
     <input type="text" name="suggestReviewIDsToExclude" style="width:100%;" value="<?php _e(apply_filters('format_to_edit',$devOptions['exclude_ids']), 'SuggestReview') ?>"></p>
 
     <h3 style="margin-bottom:0">Addresses for digest email</h3>
