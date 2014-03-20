@@ -47,6 +47,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 == Changelog ==
 
+= 1.2.4 =
+* Added option for text alignment of footer.
+
 = 1.2.3 =
 * Changed option for adding last update stamp to posts. You can now select "Yes, if not in exclusion list".
 
@@ -73,6 +76,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 * Initial version.
 
 == Upgrade Notice ==
+
+= 1.2.4 =
+New option. Upgrade optional.
 
 = 1.2.3 =
 New option. Upgrade optional.

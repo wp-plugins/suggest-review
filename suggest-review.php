@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.3
+ * @version 1.2.4
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.3
+Version: 1.2.4
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ Comment: [comment]
 
 View the content at: [permalink]'
 				,'add_update_date_to_posts' => 1 // 1 for yes, 2 for yes if not excluded, 0 for no. Since 1.2.3
+				,'footer_alignment' => 'left' // since 1.2.4
 				,'excluded_ids' => ''
 				,'address_for_digest_email' => ''
 				,'subject_for_digest_email' => 'Blog content flagged for review'
@@ -120,7 +121,7 @@ Link: [permalink]');
 				if ( $devOptions['add_update_date_to_posts'] == 1 || ( $devOptions['add_update_date_to_posts'] == 2 && ! $excluded ) ) {
 					$lastupdated = get_post_meta( $my_post_id, 'suggestreview_lastupdated' );
 					$lastupdatedby = get_post_meta( $my_post_id, 'suggestreview_lastupdatedby' );
-					$return .= '<p>Last updated by '.$lastupdatedby[0].' on '.$lastupdated[0].'</p>';
+					$return .= '<p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'>Last updated by '.$lastupdatedby[0].' on '.$lastupdated[0].'</p>';
 				}
 
 				//If this has been marked for review
@@ -128,7 +129,7 @@ Link: [permalink]');
 					$markedbyuser = get_post_meta( $my_post_id, 'suggestreview_by' );
 					$markedbydate = get_post_meta( $my_post_id, 'suggestreview_date' );
 					$markedbycomment = get_post_meta( $my_post_id, 'suggestreview_comment' );
-					$return .= '<p>The above was flagged for review by ';
+					$return .= '<p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'>The above was flagged for review by ';
 					$return .= $markedbyuser[0];
 					$return .= ' on ';
 					$return .= $markedbydate[0];
@@ -142,7 +143,7 @@ Link: [permalink]');
 						//Guests can mark, is it excluded?
 						if ( ! $excluded ) {
 							//Be advised this same stuff should appear here and just below, so if you change one, change both!
-							$return .= '<div><p><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+							$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">Flag this information for review</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
@@ -174,7 +175,7 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 							//User is logged in, is it excluded?
 							if ( ! $excluded ) {
 								//Be advised this same stuff should appear here and just above, so if you change one, change both!
-								$return .= '<div><p><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+								$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">Flag this information for review</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
@@ -346,6 +347,9 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 				if ( isset($_POST['suggestReviewAddUpdateDate']) ) {
 					$devOptions['add_update_date_to_posts'] = $_POST['suggestReviewAddUpdateDate'];
 				}
+				if ( isset($_POST['suggestReviewFooterAlignment']) ) {
+					$devOptions['footer_alignment'] = $_POST['suggestReviewFooterAlignment'];
+				}
 				if ( isset($_POST['suggestReviewIDsToExclude']) ) {
 					$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $_POST['suggestReviewIDsToExclude'] );
 				}
@@ -390,6 +394,9 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 
     <h3 style="margin-bottom:0">Add last update date to end of posts</h3>
     <p style="margin-top:0"><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="1" <?php if ($devOptions['add_update_date_to_posts'] == 1) { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_yesifnot"><input type="radio" id="suggestReviewAddUpdateDate_yesifnot" name="suggestReviewAddUpdateDate" value="2" <?php if ($devOptions['add_update_date_to_posts'] == 2) { _e('checked="checked"', "SuggestReview"); }?> /> Yes, if not in exclusion list</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="0" <?php if ($devOptions['add_update_date_to_posts'] == 0) { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
+
+    <h3 style="margin-bottom:0">Footer Alignment (affects last update date and button)</h3>
+    <p style="margin-top:0"><label for="suggestReviewFooterAlignment_left"><input type="radio" id="suggestReviewFooterAlignment_left" name="suggestReviewFooterAlignment" value="left" <?php if ($devOptions['footer_alignment'] == 'left') { _e('checked="checked"', "SuggestReview"); }?> /> Left</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewFooterAlignment_center"><input type="radio" id="suggestReviewFooterAlignment_center" name="suggestReviewFooterAlignment" value="center" <?php if ($devOptions['footer_alignment'] == 'center') { _e('checked="checked"', "SuggestReview"); }?> /> Center</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewFooterAlignment_right"><input type="radio" id="suggestReviewFooterAlignment_right" name="suggestReviewFooterAlignment" value="right" <?php if ($devOptions['footer_alignment'] == 'right') { _e('checked="checked"', "SuggestReview"); }?>/> Right</label></p>
 
     <h3 style="margin-bottom:0">Page, post IDs to exclude</h3>
     <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show, depending on the above option.<br>
