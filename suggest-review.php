@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.1
+ * @version 1.2.4
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.1
+Version: 1.2.4
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,8 @@ Suggested by: [suggesting_user_login]
 Comment: [comment]
 
 View the content at: [permalink]'
-				,'add_update_date_to_posts' => 'true'
+				,'add_update_date_to_posts' => 1 // 1 for yes, 2 for yes if not excluded, 0 for no. Since 1.2.3
+				,'footer_alignment' => 'left' // since 1.2.4
 				,'excluded_ids' => ''
 				,'address_for_digest_email' => ''
 				,'subject_for_digest_email' => 'Blog content flagged for review'
@@ -112,22 +113,23 @@ Link: [permalink]');
 					$this->resolveMarkForReview( $_POST['resolvereviewid'] );
 				}
 
-				//See if we should put in the last update time
-				if ( $devOptions['add_update_date_to_posts'] == 'true' ) {
-					$lastupdated = get_post_meta( $my_post_id, 'suggestreview_lastupdated' );
-					$lastupdatedby = get_post_meta( $my_post_id, 'suggestreview_lastupdatedby' );
-					$return .= '<p>Last updated by '.$lastupdatedby[0].' on '.$lastupdated[0].'</p>';
-				}
-
 				$excludedIDs = explode( ',', $devOptions['exclude_ids']);
 				$excluded = in_array( $my_post_id, $excludedIDs);
 				$needsReview = get_post_meta( $my_post_id, 'suggestreview_needed' );
+
+				//See if we should put in the last update time
+				if ( $devOptions['add_update_date_to_posts'] == 1 || ( $devOptions['add_update_date_to_posts'] == 2 && ! $excluded ) ) {
+					$lastupdated = get_post_meta( $my_post_id, 'suggestreview_lastupdated' );
+					$lastupdatedby = get_post_meta( $my_post_id, 'suggestreview_lastupdatedby' );
+					$return .= '<p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'>Last updated by '.$lastupdatedby[0].' on '.$lastupdated[0].'</p>';
+				}
+
 				//If this has been marked for review
 				if ( ! empty($needsReview) && $needsReview[0] == "true" && ! $excluded ) {
 					$markedbyuser = get_post_meta( $my_post_id, 'suggestreview_by' );
 					$markedbydate = get_post_meta( $my_post_id, 'suggestreview_date' );
 					$markedbycomment = get_post_meta( $my_post_id, 'suggestreview_comment' );
-					$return .= '<p>The above was flagged for review by ';
+					$return .= '<p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'>The above was flagged for review by ';
 					$return .= $markedbyuser[0];
 					$return .= ' on ';
 					$return .= $markedbydate[0];
@@ -141,7 +143,7 @@ Link: [permalink]');
 						//Guests can mark, is it excluded?
 						if ( ! $excluded ) {
 							//Be advised this same stuff should appear here and just below, so if you change one, change both!
-							$return .= '<div><p><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+							$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">Flag this information for review</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
@@ -173,7 +175,7 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 							//User is logged in, is it excluded?
 							if ( ! $excluded ) {
 								//Be advised this same stuff should appear here and just above, so if you change one, change both!
-								$return .= '<div><p><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+								$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">Flag this information for review</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
@@ -219,7 +221,112 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 
 		}
 
+		//Add the custom Bulk Action to the select menus. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		// Since 1.2.2
+		function custom_bulk_admin_footer() {
+			global $post_type;
+			
+			if($post_type == 'post') {
+				?>
+					<script type="text/javascript">
+						jQuery(document).ready(function() {
+							jQuery('<option>').val('exclude').text('<?php _e('Exclude from SuggestReview')?>').appendTo("select[name='action']");
+							jQuery('<option>').val('exclude').text('<?php _e('Exclude from SuggestReview')?>').appendTo("select[name='action2']");
+						});
+					</script>
+				<?php
+	    	}
+		}
+
+		//Handles the custom Bulk Action. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		//Since 1.2.2
+		function custom_bulk_action() {
+			global $typenow;
+			$post_type = $typenow;
+
+			if($post_type == 'post') {
+				// get the action
+				$wp_list_table = _get_list_table('WP_Posts_List_Table');  // depending on your resource type this could be WP_Users_List_Table, WP_Comments_List_Table, etc
+				$action = $wp_list_table->current_action();
+
+				$allowed_actions = array("exclude");
+				if(!in_array($action, $allowed_actions)) return;
+				
+				// security check
+				check_admin_referer('bulk-posts');
+
+				// make sure ids are submitted.  depending on the resource type, this may be 'media' or 'ids'
+				if(isset($_GET['post'])) {
+					$post_ids = array_map('intval', $_GET['post']);
+				}
+				if(empty($post_ids)) return;
+				
+				// this is based on wp-admin/edit.php
+				$sendback = remove_query_arg( array('excluded', 'untrashed', 'deleted', 'ids'), wp_get_referer() );
+				if ( ! $sendback )
+					$sendback = admin_url( "edit.php?post_type=$post_type" );
+				
+				$pagenum = $wp_list_table->get_pagenum();
+				$sendback = add_query_arg( 'paged', $pagenum, $sendback );
+
+				switch($action) {
+					case 'exclude':
+						
+						// if we set up user permissions/capabilities, the code might look like:
+						//if ( !current_user_can($post_type_object->cap->exclude_post, $post_id) )
+						//	wp_die( __('You are not allowed to exclude this post.') );
+						
+						$excluded = 0;
+						foreach( $post_ids as $post_id ) {
+
+							if ( !$this->perform_exclusion($post_id) )
+								wp_die( __('Error excluding post.') );
+			
+							$excluded++;
+						}
+						
+						$sendback = add_query_arg( array('excluded' => $excluded, 'ids' => join(',', $post_ids) ), $sendback );
+					break;
+					
+					default: return;
+				}
+				
+				$sendback = remove_query_arg( array('action', 'action2', 'tags_input', 'post_author', 'comment_status', 'ping_status', '_status',  'post', 'bulk_edit', 'post_view'), $sendback );
+				
+				wp_redirect($sendback);
+				exit();
+			}
+		}
+
+		//Displays notice on admin page after bulk excluding. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		//Since 1.2.2
+		function custom_bulk_admin_notices() {
+			global $post_type, $pagenow;
+			
+			if($pagenow == 'edit.php' && $post_type == 'post' && isset($_GET['excluded']) && (int) $_GET['excluded']) {
+				$message = sprintf( _n( 'Post excluded from SuggestReview.', '%s posts excluded from SuggestReview.', $_GET['excluded'] ), number_format_i18n( $_GET['excluded'] ) );
+				echo "<div class=\"updated\"><p>{$message}</p></div>";
+			}
+		}
+		
+		//Actually does the exclusion for bulk exclude. Snagged from Justin Stern (http://www.skyverge.com/blog/add-custom-bulk-action/).
+		//Since 1.2.2
+		function perform_exclusion($post_id) {
+			$devOptions = $this->getAdminOptions();
+			$excludedIDs = explode( ',', $devOptions['exclude_ids']);
+			$is_excluded = in_array( $post_id, $excludedIDs);
+
+			if ( !$is_excluded ) {
+				$devOptions['exclude_ids'] = $devOptions['exclude_ids'] . "," . $post_id;
+				$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $devOptions['exclude_ids'] );
+				update_option($this->adminOptionsName, $devOptions);
+			}
+
+			return true;
+		}
+
 		//Prints out the admin page
+		//Since 1.0.0
 		function printAdminPage() {
 
 			$devOptions = $this->getAdminOptions();
@@ -239,6 +346,9 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 				}
 				if ( isset($_POST['suggestReviewAddUpdateDate']) ) {
 					$devOptions['add_update_date_to_posts'] = $_POST['suggestReviewAddUpdateDate'];
+				}
+				if ( isset($_POST['suggestReviewFooterAlignment']) ) {
+					$devOptions['footer_alignment'] = $_POST['suggestReviewFooterAlignment'];
 				}
 				if ( isset($_POST['suggestReviewIDsToExclude']) ) {
 					$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $_POST['suggestReviewIDsToExclude'] );
@@ -283,10 +393,13 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
     <textarea rows="4" name="suggestReviewBodyForEmailToAuthor" style="width:100%;"><?php _e(apply_filters('format_to_edit',$devOptions['body_for_email_to_author']), 'SuggestReview') ?></textarea></p>
 
     <h3 style="margin-bottom:0">Add last update date to end of posts</h3>
-    <p style="margin-top:0"><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="true" <?php if ($devOptions['add_update_date_to_posts'] == "true") { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="false" <?php if ($devOptions['add_update_date_to_posts'] == "false") { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
+    <p style="margin-top:0"><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="1" <?php if ($devOptions['add_update_date_to_posts'] == 1) { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_yesifnot"><input type="radio" id="suggestReviewAddUpdateDate_yesifnot" name="suggestReviewAddUpdateDate" value="2" <?php if ($devOptions['add_update_date_to_posts'] == 2) { _e('checked="checked"', "SuggestReview"); }?> /> Yes, if not in exclusion list</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="0" <?php if ($devOptions['add_update_date_to_posts'] == 0) { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
+
+    <h3 style="margin-bottom:0">Footer Alignment (affects last update date and button)</h3>
+    <p style="margin-top:0"><label for="suggestReviewFooterAlignment_left"><input type="radio" id="suggestReviewFooterAlignment_left" name="suggestReviewFooterAlignment" value="left" <?php if ($devOptions['footer_alignment'] == 'left') { _e('checked="checked"', "SuggestReview"); }?> /> Left</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewFooterAlignment_center"><input type="radio" id="suggestReviewFooterAlignment_center" name="suggestReviewFooterAlignment" value="center" <?php if ($devOptions['footer_alignment'] == 'center') { _e('checked="checked"', "SuggestReview"); }?> /> Center</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewFooterAlignment_right"><input type="radio" id="suggestReviewFooterAlignment_right" name="suggestReviewFooterAlignment" value="right" <?php if ($devOptions['footer_alignment'] == 'right') { _e('checked="checked"', "SuggestReview"); }?>/> Right</label></p>
 
     <h3 style="margin-bottom:0">Page, post IDs to exclude</h3>
-    <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show if that option is selected.<br>
+    <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show, depending on the above option.<br>
     <input type="text" name="suggestReviewIDsToExclude" style="width:100%;" value="<?php _e(apply_filters('format_to_edit',$devOptions['exclude_ids']), 'SuggestReview') ?>"></p>
 
     <h3 style="margin-bottom:0">Addresses for digest email</h3>
@@ -563,5 +676,9 @@ if ( isset( $svvsd_suggestReview ) ) {
 	add_action( 'add_meta_boxes', 'add_markresolve_box' );
 	add_action( 'save_post', 'suggestReviewUpdatePost' );
 	add_action( 'suggestreviewdigest', 'digest_email' );
+	add_action( 'admin_footer-edit.php', array( &$svvsd_suggestReview, 'custom_bulk_admin_footer' ) );
+	add_action( 'load-edit.php', array( &$svvsd_suggestReview, 'custom_bulk_action' ) );
+	add_action( 'admin_notices', array( &$svvsd_suggestReview, 'custom_bulk_admin_notices' ) );
+
 }
 ?>
