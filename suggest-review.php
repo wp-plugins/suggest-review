@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.4
+ * @version 1.2.5
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.4
+Version: 1.2.5
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,8 +105,9 @@ Link: [permalink]');
 
 			//Check to see if the URL is a permalink, if not, we aren't doing anything
 			//This prevents the suggest review button from appear on search results and post lists
-			if ( "https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] == get_permalink() ) {
-
+			// Bug fix in 1.2.5: The check below was hard coded to using https and is now dynamic
+			if ( "http" . ( $_SERVER['HTTPS'] == "on" ? "s" : "" ) . "://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] == get_permalink() ) {
+				echo "<!-- sr content_insertion found uri is permalink -->\r";
 				if ( isset( $_POST['suggestreview'] ) && $_POST['suggestreview'] == '1' && isset( $_POST['suggestreviewid'] ) && $_POST['suggestreviewid'] == $my_post_id ) {
 					$this->markForReview( $_POST['suggestreviewid'], $my_user->user_login, date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ), $_POST['suggestreviewcomment'], $my_author );
 				} else if ( isset( $_POST['resolvereview'] ) && $_POST['resolvereview'] == '1' && isset( $_POST['resolvereviewid'] ) && $_POST['resolvereviewid'] == $my_post_id ) {

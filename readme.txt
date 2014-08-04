@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 3.9.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 == Changelog ==
 
+= 1.2.5 =
+* Fixed bug that caused the button to now appear when using http instead of https. Thanks to WPHaider for finding it.
+
 = 1.2.4 =
 * Added option for text alignment of footer.
 
@@ -76,6 +79,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 * Initial version.
 
 == Upgrade Notice ==
+
+= 1.2.5 =
+Bug fix. Upgrade recommended.
 
 = 1.2.4 =
 New option. Upgrade optional.
