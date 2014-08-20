@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.2.5
+ * @version 1.3.0
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.2.5
+Version: 1.3.0
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ Comment: [comment]
 View the content at: [permalink]'
 				,'add_update_date_to_posts' => 1 // 1 for yes, 2 for yes if not excluded, 0 for no. Since 1.2.3
 				,'footer_alignment' => 'left' // since 1.2.4
+				,'show_comment' => 1 // since 1.3.0. Whether or not to show comments on post when flagged
 				,'excluded_ids' => ''
 				,'address_for_digest_email' => ''
 				,'subject_for_digest_email' => 'Blog content flagged for review'
@@ -79,8 +80,8 @@ Link: [permalink]');
 			if ( $devOptions['send_email_to_author'] == "true" ) {
 				$authoremail = get_the_author_meta('user_email');
 				wp_mail( $authoremail
-					,replaceTokens( $devOptions['subject_for_email_to_author'], $post_id )
-					,replaceTokens( $devOptions['body_for_email_to_author'], $post_id ) );
+					,suggestReview_replaceTokens( $devOptions['subject_for_email_to_author'], $post_id )
+					,suggestReview_replaceTokens( $devOptions['body_for_email_to_author'], $post_id ) );
 			}
 			return true;
 		}
@@ -134,9 +135,12 @@ Link: [permalink]');
 					$return .= $markedbyuser[0];
 					$return .= ' on ';
 					$return .= $markedbydate[0];
-					$return .= '<br>Comment: <em>';
-					$return .= $markedbycomment[0];
-					$return .= '</em></p>';
+					if ( $devOptions['show_comment'] ) {
+						$return .= '<br>Comment: <em>';
+						$return .= $markedbycomment[0];
+						$return .= '</em>';
+					}
+					$return .= '</p>';
 				//If not marked for review
 				} else {
 					//Can guests mark it?
@@ -326,9 +330,10 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 			return true;
 		}
 
-		//Prints out the admin page
+		//Prints out the admin settings page
 		//Since 1.0.0
-		function printAdminPage() {
+		//Renamed in 1.3.0 from printAdminPage to printSettingsPage as there are now 2 admin pages
+		function printSettingsPage() {
 
 			$devOptions = $this->getAdminOptions();
 
@@ -350,6 +355,9 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 				}
 				if ( isset($_POST['suggestReviewFooterAlignment']) ) {
 					$devOptions['footer_alignment'] = $_POST['suggestReviewFooterAlignment'];
+				}
+				if ( isset($_POST['suggestReviewShowComment']) ) {
+					$devOptions['show_comment'] = ( $_POST['suggestReviewShowComment'] == 'true' ? 1 : 0 );
 				}
 				if ( isset($_POST['suggestReviewIDsToExclude']) ) {
 					$devOptions['exclude_ids'] = apply_filters( 'content_save_pre', $_POST['suggestReviewIDsToExclude'] );
@@ -396,8 +404,11 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
     <h3 style="margin-bottom:0">Add last update date to end of posts</h3>
     <p style="margin-top:0"><label for="suggestReviewAddUpdateDate_yes"><input type="radio" id="suggestReviewAddUpdateDate_yes" name="suggestReviewAddUpdateDate" value="1" <?php if ($devOptions['add_update_date_to_posts'] == 1) { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_yesifnot"><input type="radio" id="suggestReviewAddUpdateDate_yesifnot" name="suggestReviewAddUpdateDate" value="2" <?php if ($devOptions['add_update_date_to_posts'] == 2) { _e('checked="checked"', "SuggestReview"); }?> /> Yes, if not in exclusion list</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewAddUpdateDate_no"><input type="radio" id="suggestReviewAddUpdateDate_no" name="suggestReviewAddUpdateDate" value="0" <?php if ($devOptions['add_update_date_to_posts'] == 0) { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
 
-    <h3 style="margin-bottom:0">Footer Alignment (affects last update date and button)</h3>
+    <h3 style="margin-bottom:0">Footer alignment (affects last update date and button)</h3>
     <p style="margin-top:0"><label for="suggestReviewFooterAlignment_left"><input type="radio" id="suggestReviewFooterAlignment_left" name="suggestReviewFooterAlignment" value="left" <?php if ($devOptions['footer_alignment'] == 'left') { _e('checked="checked"', "SuggestReview"); }?> /> Left</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewFooterAlignment_center"><input type="radio" id="suggestReviewFooterAlignment_center" name="suggestReviewFooterAlignment" value="center" <?php if ($devOptions['footer_alignment'] == 'center') { _e('checked="checked"', "SuggestReview"); }?> /> Center</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewFooterAlignment_right"><input type="radio" id="suggestReviewFooterAlignment_right" name="suggestReviewFooterAlignment" value="right" <?php if ($devOptions['footer_alignment'] == 'right') { _e('checked="checked"', "SuggestReview"); }?>/> Right</label></p>
+
+    <h3 style="margin-bottom:0">Show comment on post when flagged</h3>
+    <p style="margin-top:0"><label for="suggestReviewShowComment_yes"><input type="radio" id="suggestReviewShowComment_yes" name="suggestReviewShowComment" value="true" <?php if ($devOptions['show_comment'] ) { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewShowComment_no"><input type="radio" id="suggestReviewShowComment_no" name="suggestReviewShowComment" value="false" <?php if ( ! $devOptions['show_comment'] ) { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
 
     <h3 style="margin-bottom:0">Page, post IDs to exclude</h3>
     <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show, depending on the above option.<br>
@@ -454,7 +465,119 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 
 
 					<?php
-		}//End function printAdminPage()
+		}//End function printSettingsPage()
+
+		//Display the flagged posts page, which shows a user all the posts they have edit
+		//access to that have been suggested for review
+		//Since 1.3.0
+		function printFlaggedPostsPage() {
+			global $wpdb;
+			$orderbyoptions = array( "postdate", "author", "srby", "srdate" );
+			$orderby = ( isset( $_GET['srfporderby'] ) && in_array( $_GET['srfporderby'], $orderbyoptions ) ? $_GET['srfporderby'] : 'postdate' );
+			$orderdir = ( isset( $_GET['srfporderdir'] ) && in_array( $_GET['srfporderdir'], array( "asc", "desc" ) ) ? $_GET['srfporderdir'] : 'desc' );
+			$args = array(
+				'orderby' => 'date'
+				,'order' => 'ASC'
+				,'meta_query' => array(
+					array(
+						'key' => 'suggestreview_needed'
+						,'value' => 'true'
+						,'compare' => 'LIKE'
+						)
+					)
+				);
+			$rows = query_posts( $args );
+			if ( $rows ) {
+				//echo "<!-- " . print_r( $rows, true ) . " -->\r";
+				//Main array for holding results, others for sorting
+				$sortedposts = array();
+
+				//building the array from the posts. makes for quick sorting later
+				foreach ( $rows as $post ) {
+					setup_postdata( $post );
+					if ( current_user_can( 'edit_post', $post->ID ) ) {
+						$sortedposts[] = array(
+								"ID" => $post->ID
+								,"post_title" => $post->post_title
+								,"post_date" => strtotime( $post->post_date )
+								,"author" => get_user_by( 'id', $post->post_author )->user_login
+								,"srby" => get_post_meta( $post->ID, 'suggestreview_by', true )
+								,"srcom" => get_post_meta( $post->ID, 'suggestreview_comment', true )
+								,"srdate" => strtotime( get_post_meta( $post->ID, 'suggestreview_date', true ) )
+								);
+					}
+				}
+
+				//Sort it. Why not sort in the query you ask? Well, some of the meta data doesn't exist
+				//at that point, so we can't.
+				$postdates = array();
+				$authors = array();
+				$srbys = array();
+				$srdates = array();
+				foreach ( $sortedposts as $key => $row ) {
+					$postdates[$key] = $row['post_date'];
+					$authors[$key] = $row['author'];
+					$srbys[$key] = $row['srby'];
+					$srdates[$key] = $row['srdate'];
+				}
+				array_multisort( ( $orderby == 'postdate' ? $postdates :
+									( $orderby == 'author' ? $authors :
+										( $orderby == 'srby' ? $srbys :
+											( $orderby == 'srdate' ? $srdates : $postdates ) ) ) )
+								,( $orderdir == 'asc' ? SORT_ASC : SORT_DESC )
+								,$sortedposts );
+			}
+
+			//Build the page, including the table of posts
+			if ( count( $sortedposts ) > 0 ) {
+				$baseURL = suggestReview_delArgFromURL( $_SERVER['REQUEST_URI'], array( 'srfporderby', 'srfporderdir' ) );
+				echo "\r\t<div id='suggestreview_flaggedposts'>\r";
+				echo "\t<style>\r";
+				echo "\t\ttable { border-collapse: collapse; border: 1px solid black; }\r";
+				echo "\t\ttable th, td { padding: 3px; }\r";
+				echo "\t\t.tablerow { background-color: white; }\r";
+				echo "\t\t.tablerowalt { background-color: #F0F0F0; }\r";
+				echo "\t</style>\r";
+				echo "\t\t<h2>Posts Flagged for Review</h2>\r";
+				echo "\t\t<p>This page lists all of the posts you have access to that have been suggested for a review of their content.</p>\r";
+				echo "\t\t<table border=1>\r";
+				echo "\t\t\t<thead>\r";
+				echo "\t\t\t\t<tr class='tablerow'><th style='text-align: left;'>Title</th>" .
+					"<th><a href='" . $baseURL . "&srfporderby=author&srfporderdir=" . ( $orderby == 'author' && $orderdir == 'asc' ? "desc" : "asc" ) . "'>Author</a>" . ( $orderby == 'author' ? "<div class='dashicons dashicons-arrow-" . ( $orderdir == 'asc' ? "down" : "up" ) . "'></div>" : "" ) . "</th>" .
+					"<th><a href='" . $baseURL . "&srfporderby=postdate&srfporderdir=" . ( $orderby == 'postdate' && $orderdir == 'asc' ? "desc" : "asc" ) . "'>Post Date</a>" . ( $orderby == 'postdate' ? "<div class='dashicons dashicons-arrow-" . ( $orderdir == 'asc' ? "down" : "up" ) . "'></div>" : "" ) . "</th>" .
+					"<th><a href='" . $baseURL . "&srfporderby=srby&srfporderdir=" . ( $orderby == 'srby' && $orderdir == 'asc' ? "desc" : "asc" ) . "'>Flagged By</a>" . ( $orderby == 'srby' ? "<div class='dashicons dashicons-arrow-" . ( $orderdir == 'asc' ? "down" : "up" ) . "'></div>" : "" ) . "</th>" .
+					"<th><a href='" . $baseURL . "&srfporderby=srdate&srfporderdir=" . ( $orderby == 'srdate' && $orderdir == 'asc' ? "desc" : "asc" ) . "'>Flagged On</a>" . ( $orderby == 'srdate' ? "<div class='dashicons dashicons-arrow-" . ( $orderdir == 'asc' ? "down" : "up" ) . "'></div>" : "" ) . "</th><tr>\r";
+				echo "\t\t\t</thead>\r";
+				echo "\t\t\t<tbody>\r";
+				$i = 0;
+				foreach ( $sortedposts as $post ) {
+					echo "\t\t\t\t<tr class='tablerow" . ( $i % 2 == 0 ? "alt" : "" ) . "'>" .
+						"<td><a href='" . get_permalink( $post['ID'] ) . "'>" . $post['post_title'] . "</a><br></td>" .
+						"<td>" . $post['author'] . "</td>" .
+						"<td>" . date( 'Y/m/d', $post['post_date'] ) . "</td>" .
+						"<td>" . $post['srby'] . "</td>" .
+						"<td>" . date( 'Y/m/d', $post['srdate'] ) . "</td></tr>\r";
+					$i++;
+				}
+				echo "\t\t\t</tbody>\r";
+				echo "\t\t</table>\r";
+				echo "\t</div>\r";
+			}
+
+		}
+
+		//Add admin page(s) to dashboard
+		//Since 1.3.0
+		function adminMenu() {
+			//If user is an admin, show all the options, otherwise just show the flagged posts page
+			if ( current_user_can( 'manage_options' ) ) {
+				add_menu_page( 'Suggest Review Settings', 'Suggest Review', 'manage_options', 'suggestreview_settings', array( $this, 'printSettingsPage' ), 'dashicons-flag' );
+				add_submenu_page( 'suggestreview_settings', 'Suggest Review Settings', 'Settings', 'manage_options', 'suggestreview_settings', array( $this, 'printSettingsPage' ) );
+				add_submenu_page( 'suggestreview_settings', 'Posts Suggested for Review', 'Flagged Posts', 'edit_posts', 'suggestreview_posts', array( $this, 'printFlaggedPostsPage' ) );
+			} else {
+				add_menu_page( 'Posts Suggested for Review', 'SR Flagged Posts', 'edit_posts', 'suggestreview_posts', array( $this, 'printFlaggedPostsPage' ), 'dashicons-flag' );
+			}
+		}
 
 	}
 } //End Class SuggestReview
@@ -463,31 +586,18 @@ if ( class_exists( "SuggestReview" ) ) {
 	$svvsd_suggestReview = new SuggestReview();
 }
 
-//Initialize the admin panel
-if ( ! function_exists( "suggestReview_ap" ) ) {
-	function suggestReview_ap() {
-		global $svvsd_suggestReview;
-		if ( ! isset( $svvsd_suggestReview ) ) {
-			return;
-		}
-		if ( function_exists( 'add_options_page' ) ) {
-	add_options_page( 'Suggest Review', 'Suggest Review', 9, basename( __FILE__ ), array( &$svvsd_suggestReview, 'printAdminPage' ) );
-		}
-	}	
-}
-
-function add_markresolve_box() {
+function suggestReview_addMarkresolveBox() {
 	add_meta_box(
  			'suggest_review_meta_box'
 			,__( 'Resolve Suggest Review Flag' )
-			,'render_meta_box_content'
+			,'suggestReview_renderMetaBoxContent'
 			,get_post_type( get_the_ID() )
 			,'side'
 			,'high'
 		);
 }
 
-function render_meta_box_content( $post ) {
+function suggestReview_renderMetaBoxContent( $post ) {
 	global $svvsd_suggestReview;
 	$needsReview = get_post_meta( $post->ID, 'suggestreview_needed' );
 	if ( ! empty( $needsReview ) && $needsReview[0] == 'true' ) {
@@ -501,16 +611,16 @@ function render_meta_box_content( $post ) {
 	$devOptions = $svvsd_suggestReview->getAdminOptions();
 	$excludedIDs = explode( ',', $devOptions['exclude_ids']);
 	$excluded = in_array( $post->ID, $excludedIDs);
-	echo '<p>Exclude from suggest review <label for="suggestReview_excludeflag_yes"><input type="radio" id="suggestReview_excludeflag_yes" name="suggestReview_excludeflag" value="true"';
+	echo '<p>Exclude from SR? <input type="radio" id="suggestReview_excludeflag_yes" name="suggestReview_excludeflag" value="true"';
 	if ( $excluded ) {
 		echo ' checked';
 	}
-	echo ' /> Yes </label>';
-	echo '<label for="suggestReview_excludeflag_no"><input type="radio" id="suggestReview_excludeflag_no" name="suggestReview_excludeflag" value="false"';
+	echo ' />Yes&nbsp;&nbsp;';
+	echo '<input type="radio" id="suggestReview_excludeflag_no" name="suggestReview_excludeflag" value="false"';
 	if ( !$excluded ) {
 		echo ' checked';
 	}
-	echo ' /> No</label></p>';
+	echo ' />No</p>';
 	return true;
 }
 
@@ -556,7 +666,7 @@ function suggestReviewDeactivation() {
 	wp_clear_scheduled_hook('suggestreviewdigest');
 }
 
-function my_add_weekly( $schedules ) {
+function suggestReview_addWeeklySchedule( $schedules ) {
 	// add a 'weekly' schedule to the existing set
 	$schedules['weekly'] = array(
 		'interval' => 604800,
@@ -568,7 +678,7 @@ function my_add_weekly( $schedules ) {
 	return $schedules;
 }
 
-function digest_email() {
+function suggestReview_digestEmail() {
 	//Vars
 	global $wpdb;
 	global $post;
@@ -589,14 +699,14 @@ function digest_email() {
 	//If we have any posts, make some mail
 	if ( ! empty( $posts_for_digest ) ) {
 		//First part of body comes from options
-		$body_string = replaceTokens( $devOptions['body_for_digest_email'], $post->ID );
+		$body_string = suggestReview_replaceTokens( $devOptions['body_for_digest_email'], $post->ID );
 		$body_string .= '
 
 ';
 		//Post items to go in body
 		foreach ( $posts_for_digest as $post ) {
 			setup_postdata( $post );
-			$body_string .= replaceTokens( $devOptions['item_for_digest_email'], $post->ID );
+			$body_string .= suggestReview_replaceTokens( $devOptions['item_for_digest_email'], $post->ID );
 			$body_string .= '
 
 ';
@@ -614,7 +724,7 @@ function digest_email() {
 
 //Replaces token variables in email templates
 //Since 1.1.0
-function replaceTokens( $text, $post_id ) {
+function suggestReview_replaceTokens( $text, $post_id ) {
 	//Get meta
 	$marking_user_login = get_post_meta( $post_id, 'suggestreview_by');
 	$marked_date = get_post_meta( $post_id, 'suggestreview_date' );
@@ -661,6 +771,38 @@ function replaceTokens( $text, $post_id ) {
 	return $text;
 }
 
+//Handy for monkeying with _GET parameters
+function suggestReview_delArgFromURL ( $url, $in_arg ) {
+	if ( ! is_array( $in_arg ) ) {
+		$args = array( $in_arg );
+	} else {
+		$args = $in_arg;
+	}
+
+	$pos = strrpos( $url, "?" ); // get the position of the last ? in the url
+	$query_string_parts = array();
+
+	if ( $pos !== false ) {
+		foreach ( explode( "&", substr( $url, $pos + 1 ) ) as $q ) {
+			list( $key, $val ) = explode( "=", $q );
+			//echo "<!-- key: $key value: $val -->\r";
+			if ( ! in_array( $key, $args ) ) {
+				// keep track of the parts that don't have arg3 as the key
+				$query_string_parts[] = "$key=$val";
+			}
+		}
+
+		// rebuild the url
+		$url = substr( $url, 0, $pos + 1 ) . join( $query_string_parts, '&' );
+
+		if ( strrpos( $url, "?" ) == strlen( $url ) - 1 ) {
+			$url = strstr( $url, '?', true );
+		}
+	}
+	//echo "<!-- result from delArgFromURL: $url -->\r";
+	return $url;
+}
+
 //Actions and Filters
 if ( isset( $svvsd_suggestReview ) ) {
 	register_activation_hook( __FILE__, 'suggestReviewActivation' );
@@ -668,15 +810,15 @@ if ( isset( $svvsd_suggestReview ) ) {
 
 	//Filters
 	add_filter( 'the_content', array( &$svvsd_suggestReview, 'content_insertion' ), 10 );
-	add_filter( 'cron_schedules', 'my_add_weekly' );
+	add_filter( 'cron_schedules', 'suggestReview_addWeeklySchedule' );
 	add_filter( 'plugin_action_links_' . plugin_basename( plugin_dir_path( __FILE__ ) . 'suggest-review.php' ), array( &$svvsd_suggestReview, 'settings_link' ) );
 
 	//Actions
-	add_action( 'admin_menu', 'suggestReview_ap' );
+	add_action( 'admin_menu', array( &$svvsd_suggestReview, 'adminMenu' ) );
 	add_action( 'activate_suggest_review/suggest-review.php',  array( &$svvsd_suggestReview, 'init' ) );
-	add_action( 'add_meta_boxes', 'add_markresolve_box' );
+	add_action( 'add_meta_boxes', 'suggestReview_addMarkresolveBox' );
 	add_action( 'save_post', 'suggestReviewUpdatePost' );
-	add_action( 'suggestreviewdigest', 'digest_email' );
+	add_action( 'suggestreviewdigest', 'suggestReview_digestEmail' );
 	add_action( 'admin_footer-edit.php', array( &$svvsd_suggestReview, 'custom_bulk_admin_footer' ) );
 	add_action( 'load-edit.php', array( &$svvsd_suggestReview, 'custom_bulk_action' ) );
 	add_action( 'admin_notices', array( &$svvsd_suggestReview, 'custom_bulk_admin_notices' ) );
