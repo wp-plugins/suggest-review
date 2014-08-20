@@ -53,6 +53,7 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 = 1.3.0 =
 * Added option to not display comment on posts.
 * Added dashboard page that lists all flagged posts (that the current user has access to).
+* Both new features are at WPHaider's suggestion, so big thanks go to Haider!
 
 = 1.2.5 =
 * Fixed bug that caused the button to now appear when using http instead of https. Thanks to WPHaider for finding it.
