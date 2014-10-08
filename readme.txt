@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 4.0.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,7 +48,10 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 6. Dashboard page to list flagged posts.
 7. Admins see the settings and post list in the dashboard.
 
-== Changelog ==
+== Changelog ===
+
+= 1.3.1 =
+* Added option to change the text of the button.
 
 = 1.3.0 =
 * Added option to not display comment on posts.
@@ -86,7 +89,10 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 = 1.0.0 =
 * Initial version.
 
-== Upgrade Notice ==
+== Upgrade Notice ===
+
+= 1.3.1 =
+New option. Upgrade optional.
 
 = 1.3.0 =
 New features. Upgrade recommended, but not required.

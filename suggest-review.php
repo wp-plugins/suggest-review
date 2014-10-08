@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.3.0
+ * @version 1.3.1
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.3.0
+Version: 1.3.1
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ if ( ! class_exists( "SuggestReview" ) ) {
 
 		//Returns an array of admin options
 		function getAdminOptions() {
-			$suggestReviewAdminOptions = array('allow_unregistered' => 'false'
+			$suggestReviewAdminOptions = array(
+                'allow_unregistered' => 'false'
 				,'send_email_to_author' => 'true'
 				,'subject_for_email_to_author' => 'Blog content flagged for review'
 				,'body_for_email_to_author' => 'Content you authored on the blog has been suggested for review. You should check this content and any comments on it and then post an update.
@@ -59,7 +60,9 @@ View the content at: [permalink]'
 Title: [post_title]
 Author: [author_login]
 Last Modified: [post_modified]
-Link: [permalink]');
+Link: [permalink]'
+                ,'flag_button_text' => 'Flag this information for review' // since 1.3.1
+                );
 			$devOptions = get_option( $this->adminOptionsName );
 			if ( ! empty( $devOptions ) ) {
 				foreach ( $devOptions as $key => $option )
@@ -148,7 +151,7 @@ Link: [permalink]');
 						//Guests can mark, is it excluded?
 						if ( ! $excluded ) {
 							//Be advised this same stuff should appear here and just below, so if you change one, change both!
-							$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+							$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">' . $devOptions['flag_button_text'] . '</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
@@ -180,7 +183,7 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 							//User is logged in, is it excluded?
 							if ( ! $excluded ) {
 								//Be advised this same stuff should appear here and just above, so if you change one, change both!
-								$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">Flag this information for review</button></p></div>
+								$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">' . $devOptions['flag_button_text'] . '</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
@@ -374,6 +377,9 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 				if ( isset($_POST['suggestReviewItemForDigestEmail']) ) {
 					$devOptions['item_for_digest_email'] = apply_filters( 'content_save_pre', $_POST['suggestReviewItemForDigestEmail'] );
 				}
+				if ( isset($_POST['suggestReviewFlagButtonText']) ) {
+					$devOptions['flag_button_text'] = apply_filters( 'content_save_pre', $_POST['suggestReviewFlagButtonText'] );
+				}
 				update_option($this->adminOptionsName, $devOptions);
 
 				?>
@@ -409,6 +415,9 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 
     <h3 style="margin-bottom:0">Show comment on post when flagged</h3>
     <p style="margin-top:0"><label for="suggestReviewShowComment_yes"><input type="radio" id="suggestReviewShowComment_yes" name="suggestReviewShowComment" value="true" <?php if ($devOptions['show_comment'] ) { _e('checked="checked"', "SuggestReview"); }?> /> Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;<label for="suggestReviewShowComment_no"><input type="radio" id="suggestReviewShowComment_no" name="suggestReviewShowComment" value="false" <?php if ( ! $devOptions['show_comment'] ) { _e('checked="checked"', "SuggestReview"); }?>/> No</label></p>
+
+    <h3 style="margin-bottom:0">Flag button text</h3>
+    <input type="text" name="suggestReviewFlagButtonText" style="width:100%;" value="<?php _e(apply_filters('format_to_edit',$devOptions['flag_button_text']), 'SuggestReview') ?>"></p>
 
     <h3 style="margin-bottom:0">Page, post IDs to exclude</h3>
     <p style="margin-top:0">This is the comma-separated list of IDs that will not show the suggest review button. The 'last update' text will still show, depending on the above option.<br>
