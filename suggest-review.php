@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.3.1
+ * @version 1.3.2
  */
 /*
 Plugin Name: Suggest Review
 Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
-Version: 1.3.1
+Version: 1.3.2
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -146,18 +146,13 @@ Link: [permalink]'
 					$return .= '</p>';
 				//If not marked for review
 				} else {
-					//Can guests mark it?
-					if ($devOptions['allow_unregistered'] == "true" ) {
-						//Guests can mark, is it excluded?
-						if ( ! $excluded ) {
-							//Be advised this same stuff should appear here and just below, so if you change one, change both!
-							$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">' . $devOptions['flag_button_text'] . '</button></p></div>
+                    $contentToInsert = '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">' . $devOptions['flag_button_text'] . '</button></p></div>
 
 <div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
 <form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
-<textarea rows="4" name="suggestreviewcomment" style="width:85%; margin-top:-5px; margin-bottom:3px;"></textarea>
+<textarea rows="4" name="suggestreviewcomment" style="width:85%; margin:2px 0px 0px 5px;"></textarea>
 </form>
-<p><button id="SuggestReviewCancelButton" style="float:left;">Cancel</button><button id="SuggestReviewSubmitButton" style="float:left; margin-left:50px;">Submit</button></p><br><br>
+<p><button id="SuggestReviewCancelButton" style="float:left;">Cancel</button><button id="SuggestReviewSubmitButton" style="float:left; margin-left:50px;">Submit</button></p><br>
 </div>
 
 <script>
@@ -176,6 +171,12 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
         jQuery("#SuggestReviewRealSubmitButton").click();
     });
 </script>';
+					//Can guests mark it?
+					if ($devOptions['allow_unregistered'] == "true" ) {
+						//Guests can mark, is it excluded?
+						if ( ! $excluded ) {
+							//Be advised this same stuff should appear here and just below, so if you change one, change both!
+							$return .= $contentToInsert;
 						}
 					} else {
 						//If guests can't mark, is anyone logged in?
@@ -183,31 +184,7 @@ jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
 							//User is logged in, is it excluded?
 							if ( ! $excluded ) {
 								//Be advised this same stuff should appear here and just above, so if you change one, change both!
-								$return .= '<div><p style=\'text-align: ' . $devOptions['footer_alignment'] . '\'><button id="SuggestReviewButton">' . $devOptions['flag_button_text'] . '</button></p></div>
-
-<div id="SuggestReviewComment" style="display:none"><p style="margin-bottom:0px;"><strong>Suggest Review:</strong> Please leave a comment below explaining why.</p>
-<form id="SuggestReviewForm" method="post" action="'.$_SERVER["REQUEST_URI"].'"><input type="hidden" name="suggestreview" value="1"><input type="hidden" name="suggestreviewid" value="'.$my_post_id.'"><input id="SuggestReviewRealSubmitButton" type="submit" style="display:none;">
-<textarea rows="4" name="suggestreviewcomment" style="width:85%; margin-top:-5px; margin-bottom:3px;"></textarea>
-</form>
-<p><button id="SuggestReviewCancelButton" style="float:left;">Cancel</button><button id="SuggestReviewSubmitButton" style="float:left; margin-left:50px;">Submit</button><br></p>
-</div>
-
-<script>
-jQuery( "#SuggestReviewButton").click(function(e){
-		e.preventDefault;
-		jQuery("#SuggestReviewComment").toggle();
-		jQuery("#SuggestReviewButton").toggle();
-	});
-jQuery( "#SuggestReviewCancelButton").click(function(e){
-		e.preventDefault;
-		jQuery("#SuggestReviewComment").toggle();
-		jQuery("#SuggestReviewButton").toggle();
-	});
-jQuery( "#SuggestReviewSubmitButton" ).click(function(e){
-        e.preventDefault;
-        jQuery("#SuggestReviewRealSubmitButton").click();
-    });
-</script>';
+								$return .= $contentToInsert;
 							}
 						}
 					}

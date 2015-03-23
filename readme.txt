@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 4.1.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 == Changelog ===
 
+= 1.3.2 =
+* Minor bug fix relating to CSS on the comment box.
+
 = 1.3.1 =
 * Added option to change the text of the button.
 
@@ -90,6 +93,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 * Initial version.
 
 == Upgrade Notice ===
+
+= 1.3.2 =
+Minor bug fix. Upgrade optional.
 
 = 1.3.1 =
 New option. Upgrade optional.
