@@ -3,8 +3,8 @@ Contributors: george_michael
 Donate link: 
 Tags: 
 Requires at least: 3.5.2
-Tested up to: 4.2.1
-Stable tag: 1.3.2
+Tested up to: 4.2.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,8 +26,15 @@ Neither the mark for review button or last update date will appear on list of po
 
 == Installation ==
 
-1. Upload `suggest-review.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
+From your WordPress dashboard:
+1. From the Plugins page, select 'Add New'
+1. Search for 'Suggest Review'
+1. Click the 'Install Now' or 'Update Now' button
+1. Activate the plugin through the 'Plugins' page
+Not using the dashboard?
+1. Download the plugin zip file
+1. Unpack the zip file into your WordPress plugins directory (i.e., /PathToWordPress/wp-content/plugins/suggest-review/)
+1. Activate the plugin through the 'Plugins' page
 
 == Frequently Asked Questions ==
 
@@ -49,6 +56,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 7. Admins see the settings and post list in the dashboard.
 
 == Changelog ===
+
+= 1.3.3 =
+* Moved some CSS to external stylesheet for easier editing. Added some options to make language translation easier. Thanks to Jakub for the feedback.
 
 = 1.3.2 =
 * Minor bug fix relating to CSS on the comment box.
@@ -93,6 +103,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 * Initial version.
 
 == Upgrade Notice ===
+
+= 1.3.3 =
+Minor changes based on user feedback. Upgrade recommended.
 
 = 1.3.2 =
 Minor bug fix. Upgrade optional.
