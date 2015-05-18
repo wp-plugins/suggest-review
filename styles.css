@@ -1,0 +1,34 @@
+/* The actual text area used for input when a user wants to make a suggestions */
+#suggestReview_commentBox {
+    width:85%;
+    height: 50px;
+    margin:2px 0px 0px 5px;
+}
+
+/* Items relating to the table presented on the "Flagged Posts" admin page */
+#suggestReview_flaggedPostsTable {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+#suggestReview_flaggedPostsTable th, td {
+    padding: 3px;
+}
+#suggestReview_flaggedPostsTable tr.tablerow {
+    background-color: white;
+}
+#suggestReview_flaggedPostsTable tr.tablerowalt {
+    background-color: #F0F0F0;
+}
+
+/* Used on settings page */
+h3.suggestReview_setting {
+    margin-bottom: 1px;
+}
+p.suggestReview_setting {
+    margin-top: 0px;
+}
+.suggestReview_settingsLink {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
