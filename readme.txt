@@ -25,16 +25,17 @@ a while and is now out of date, a user can let you know that you need to update 
 Neither the mark for review button or last update date will appear on list of post pages or search results.
 
 = Translations =
-* Polish (pl) by [Jakob Gardner](http://www.oop.org.pl/)
+* Polish (pl) by [Jakob Gardner, garden designer](http://jakubgardner.com/)
 
 == Installation ==
 
-From your WordPress dashboard:
+= From your WordPress dashboard: =
 1. From the Plugins page, select 'Add New'
 1. Search for 'Suggest Review'
 1. Click the 'Install Now' or 'Update Now' button
 1. Activate the plugin through the 'Plugins' page
-Not using the dashboard?
+
+= Not using the dashboard? =
 1. Download the plugin zip file
 1. Unpack the zip file into your WordPress plugins directory (i.e., /PathToWordPress/wp-content/plugins/suggest-review/)
 1. Activate the plugin through the 'Plugins' page
