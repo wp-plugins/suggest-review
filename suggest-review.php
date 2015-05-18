@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.3.3
+ * @version 1.3.4
  */
 /*
 Plugin Name: Suggest Review
@@ -9,7 +9,7 @@ Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
 Text Domain: suggest-review
-Version: 1.3.3
+Version: 1.3.4
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -576,6 +576,11 @@ if ( ! class_exists( "SuggestReview" ) ) {
                 }
                 echo "\t\t\t</tbody>\r";
                 echo "\t\t</table>\r";
+                echo "\t</div>\r";
+            } else {
+                echo "\r\t<div id='suggestreview_flaggedposts'>\r";
+                echo "\t\t<h2>" . _x( 'Posts Flagged for Review', 'Title text for flagged posts table', 'suggest-review' ) . "</h2>\r";
+                echo "\t\t<p>" . _x( 'No posts have been flagged for review.', 'suggest-review' ) . "</p>\r";
                 echo "\t</div>\r";
             }
 

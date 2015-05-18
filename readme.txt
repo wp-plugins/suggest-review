@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 4.2.2
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,9 @@ a while and is now out of date, a user can let you know that you need to update 
 * There is a page in the dashboard that lists all of the content that has been flagged for review (that the current user can access)
 
 Neither the mark for review button or last update date will appear on list of post pages or search results.
+
+= Translations =
+* Polish (pl) by [Jakob Gardner](http://www.oop.org.pl/)
 
 == Installation ==
 
@@ -57,8 +60,14 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 == Changelog ===
 
+= 1.3.4 =
+* Fixed some CSS for the legend on the settings page.
+* Added Polish translation contributed by Jakub Gardner
+
 = 1.3.3 =
-* Moved some CSS to external stylesheet for easier editing. Added some options to make language translation easier. Thanks to Jakub for the feedback.
+* Moved some CSS to external stylesheet for easier editing.
+* Added some options to make language translation easier.
+* Thanks to Jakub for the feedback.
 
 = 1.3.2 =
 * Minor bug fix relating to CSS on the comment box.
@@ -103,6 +112,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 * Initial version.
 
 == Upgrade Notice ===
+
+= 1.3.4 =
+Minor changes. Upgrade optional.
 
 = 1.3.3 =
 Minor changes based on user feedback. Upgrade recommended.

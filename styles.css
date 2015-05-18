@@ -30,4 +30,5 @@ p.suggestReview_setting {
 .suggestReview_settingsLink {
     text-decoration: underline;
     color: blue;
+    cursor: pointer;
 }
