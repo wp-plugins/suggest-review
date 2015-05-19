@@ -4,7 +4,7 @@ Donate link:
 Tags: 
 Requires at least: 3.5.2
 Tested up to: 4.2.2
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 
 == Changelog ===
 
+= 1.3.5 =
+* The dashboard page added in 1.3.0 to show all flagged posts was only working with posts, not pages or any custom types. That should now be fixed.
+
 = 1.3.4 =
 * Fixed some CSS for the legend on the settings page.
 * Added Polish translation contributed by Jakub Gardner
@@ -113,6 +116,9 @@ plugin and really had no knowledge of Wordpress, so it seemed like a good way to
 * Initial version.
 
 == Upgrade Notice ===
+
+= 1.3.5 =
+Bug fix. Upgrade recommended.
 
 = 1.3.4 =
 Minor changes. Upgrade optional.

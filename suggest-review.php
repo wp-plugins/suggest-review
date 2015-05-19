@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.3.4
+ * @version 1.3.5
  */
 /*
 Plugin Name: Suggest Review
@@ -9,7 +9,7 @@ Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
 Text Domain: suggest-review
-Version: 1.3.4
+Version: 1.3.5
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -494,40 +494,37 @@ if ( ! class_exists( "SuggestReview" ) ) {
             $orderby = ( isset( $_GET['srfporderby'] ) && in_array( $_GET['srfporderby'], $orderbyoptions ) ? $_GET['srfporderby'] : 'postdate' );
             $orderdir = ( isset( $_GET['srfporderdir'] ) && in_array( $_GET['srfporderdir'], array( "asc", "desc" ) ) ? $_GET['srfporderdir'] : 'desc' );
             $args = array(
-                'orderby' => 'date'
-                ,'order' => 'ASC'
-                ,'meta_query' => array(
-                    array(
-                        'key' => 'suggestreview_needed'
-                        ,'value' => 'true'
-                        ,'compare' => 'LIKE'
-                        )
-                    )
-                );
-            $rows = query_posts( $args );
-            if ( $rows ) {
-                //echo "<!-- " . print_r( $rows, true ) . " -->\r";
+                            "meta_key" => "suggestreview_needed"
+                            ,"meta_value" => "true"
+                            ,"post_type" => "any"
+                            ,"post_status" => "any"
+                            ,"posts_per_page" => 500
+                        );
+            $query = new WP_Query( $args );
+
+            if ( $query->have_posts() ) {
                 //Main array for holding results, others for sorting
                 $sortedposts = array();
 
                 //building the array from the posts. makes for quick sorting later
-                foreach ( $rows as $post ) {
+                foreach ( $query->posts as $post ) {
                     setup_postdata( $post );
                     if ( current_user_can( 'edit_post', $post->ID ) ) {
                         $sortedposts[] = array(
-                                "ID" => $post->ID
-                                ,"post_title" => $post->post_title
-                                ,"post_date" => strtotime( $post->post_date )
-                                ,"author" => get_user_by( 'id', $post->post_author )->user_login
-                                ,"srby" => get_post_meta( $post->ID, 'suggestreview_by', true )
-                                ,"srcom" => get_post_meta( $post->ID, 'suggestreview_comment', true )
-                                ,"srdate" => strtotime( get_post_meta( $post->ID, 'suggestreview_date', true ) )
-                                );
+                                                "ID" => $post->ID
+                                                ,"post_title" => $post->post_title
+                                                ,"post_date" => strtotime( $post->post_date )
+                                                ,"author" => get_user_by( 'id', $post->post_author )->user_login
+                                                ,"srby" => get_post_meta( $post->ID, 'suggestreview_by', true )
+                                                ,"srcom" => get_post_meta( $post->ID, 'suggestreview_comment', true )
+                                                ,"srdate" => strtotime( get_post_meta( $post->ID, 'suggestreview_date', true ) )
+                                            );
                     }
                 }
+                wp_reset_postdata();
 
-                //Sort it. Why not sort in the query you ask? Well, some of the meta data doesn't exist
-                //at that point, so we can't.
+                //Sort it. Why not sort in the query you ask? Well, some of
+                //the meta data doesn't exist at that point, so we can't.
                 $postdates = array();
                 $authors = array();
                 $srbys = array();
