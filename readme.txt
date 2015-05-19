@@ -49,6 +49,11 @@ mechanism for users to let us know when something was old or confusing. Sure, th
 but I wanted something that would also limit the amount of feedback from one article. Also, I'd never written a
 plugin and really had no knowledge of Wordpress, so it seemed like a good way to learn.
 
+= Can it be translated? =
+
+If you would like to see Suggest Review in another language, you can use the .pot file included with the plugin to
+create a translation into any language. Email me the completed .po file and I'll include it in future releases.
+
 == Screenshots ==
 
 1. Example of a post that has been flagged for review. Also shows the 'last updated' option.
