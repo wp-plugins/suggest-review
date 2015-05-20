@@ -25,7 +25,7 @@ a while and is now out of date, a user can let you know that you need to update 
 Neither the mark for review button or last update date will appear on list of post pages or search results.
 
 = Translations =
-* Polish (pl) by [Jakob Gardner, garden designer](http://jakubgardner.com/)
+* Polish (pl) by [Jakub Gardner, garden designer](http://jakubgardner.com/)
 
 == Installation ==
 
