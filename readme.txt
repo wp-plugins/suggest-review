@@ -3,8 +3,8 @@ Contributors: george_michael
 Donate link: 
 Tags: 
 Requires at least: 3.5.2
-Tested up to: 4.2.2
-Stable tag: 1.3.5
+Tested up to: 4.3.0
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ create a translation into any language. Email me the completed .po file and I'll
 
 == Changelog ===
 
+= 1.3.6 =
+* Removed PHP4 constructor from class as WP 4.3 deprecated that type of constructor.
+
 = 1.3.5 =
 * The dashboard page added in 1.3.0 to show all flagged posts was only working with posts, not pages or any custom types. That should now be fixed.
 
@@ -121,6 +124,9 @@ create a translation into any language. Email me the completed .po file and I'll
 * Initial version.
 
 == Upgrade Notice ===
+
+= 1.3.6 =
+* Required upgrade if using WP 4.3.
 
 = 1.3.5 =
 Bug fix. Upgrade recommended.

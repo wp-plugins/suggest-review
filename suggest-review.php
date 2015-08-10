@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Suggest_Review
- * @version 1.3.5
+ * @version 1.3.6
  */
 /*
 Plugin Name: Suggest Review
@@ -9,7 +9,7 @@ Plugin URI: http://wordpress.org/plugins/suggest-review/
 Description: Lets users suggest that content may need to be reviewed or re-examined.
 Author: Michael George
 Text Domain: suggest-review
-Version: 1.3.5
+Version: 1.3.6
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,9 +29,6 @@ Version: 1.3.5
 if ( ! class_exists( "SuggestReview" ) ) {
     class SuggestReview {
         var $adminOptionsName = "SuggestReviewAdminOptions";
-
-        function SuggestReview() { //constructor
-        }
 
         function init() {
             $this->getAdminOptions();
