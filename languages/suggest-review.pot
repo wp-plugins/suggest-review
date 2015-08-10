@@ -1,0 +1,544 @@
+# Copyright (C) 2015 Suggest Review
+# This file is distributed under the same license as the Suggest Review package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Suggest Review 1.3.4\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/suggest-review\n"
+"POT-Creation-Date: 2015-05-18 13:28:28+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: suggest-review.php:45
+msgctxt "Default subject line for email to author"
+msgid "Blog content flagged for review"
+msgstr ""
+
+#: suggest-review.php:46
+msgctxt "Default body for email to author"
+msgid ""
+"Content you authored on the blog has been suggested for review. You should "
+"check this content and any comments on it and then post an update.\\n"
+"\\nTitle: [%s]\\nSuggested by: [%s]\\nComment: [%s]\\n\\nView the content "
+"at: [%s]"
+msgstr ""
+
+#: suggest-review.php:47 suggest-review.php:60 suggest-review.php:473
+#: suggest-review.php:800
+msgctxt "Variable name for posts title"
+msgid "post_title"
+msgstr ""
+
+#: suggest-review.php:48 suggest-review.php:462 suggest-review.php:790
+msgctxt "Variable name for suggesting users login name"
+msgid "suggesting_user_login"
+msgstr ""
+
+#: suggest-review.php:49 suggest-review.php:467 suggest-review.php:804
+msgctxt "Variable name for suggesting users comment"
+msgid "comment"
+msgstr ""
+
+#: suggest-review.php:50 suggest-review.php:63 suggest-review.php:476
+#: suggest-review.php:803
+msgctxt "Variable name for posts permalink"
+msgid "permalink"
+msgstr ""
+
+#: suggest-review.php:57
+msgctxt "Default subject line for digest email"
+msgid "Blog content flagged for review"
+msgstr ""
+
+#: suggest-review.php:58
+msgctxt "Default body for digest email"
+msgid "The following content has been marked for review on the blog."
+msgstr ""
+
+#: suggest-review.php:59
+msgctxt "Default for items in digest email"
+msgid "\\nTitle: [%s]\\nAuthor: [%s]\\nLast Modified: [%s]\\nLink: [%s]"
+msgstr ""
+
+#: suggest-review.php:61 suggest-review.php:468 suggest-review.php:795
+msgctxt "Variable name for post authors login name"
+msgid "author_login"
+msgstr ""
+
+#: suggest-review.php:62 suggest-review.php:475 suggest-review.php:802
+msgctxt "Variable name for posts last modification date"
+msgid "post_modified"
+msgstr ""
+
+#: suggest-review.php:65
+msgctxt "Default text for the button to suggest review of a post"
+msgid "Flag this information for review"
+msgstr ""
+
+#: suggest-review.php:130
+msgctxt ""
+"Display when set to display last update information. Variable 1 is login "
+"name. Variable 2 is date when updated."
+msgid "Last updated by %1$s on %2$s"
+msgstr ""
+
+#: suggest-review.php:147
+msgctxt ""
+"Text to display when a post has been flagged already. Variable 1 is "
+"suggesting users login. Variable 2 is date when flagged."
+msgid "The above was flagged for review by %1$s on %2$s"
+msgstr ""
+
+#: suggest-review.php:154
+msgctxt "Displays before suggesting users comment (if enabled) after a post"
+msgid "Comment:"
+msgstr ""
+
+#: suggest-review.php:191
+msgctxt "Text in bold that appears above the suggest review comment box"
+msgid "Suggest Review:"
+msgstr ""
+
+#: suggest-review.php:192
+msgctxt ""
+"Text after the bold text that appears above the suggest review comment box"
+msgid "Please leave a comment below explaining why."
+msgstr ""
+
+#: suggest-review.php:195
+msgctxt ""
+"Text for cancel button that appears below the suggest review comment box"
+msgid "Cancel"
+msgstr ""
+
+#: suggest-review.php:196
+msgctxt ""
+"Text for submit button that appears below the suggest review comment box"
+msgid "Submit"
+msgstr ""
+
+#: suggest-review.php:227
+msgid "Settings"
+msgstr ""
+
+#: suggest-review.php:242 suggest-review.php:243
+msgid "Exclude from SuggestReview"
+msgstr ""
+
+#: suggest-review.php:292
+msgid "Error excluding post."
+msgstr ""
+
+#: suggest-review.php:316
+msgctxt ""
+"Result text for using the bult action to exclude posts from suggest review. "
+"Make sure plural message includes variable for number of posts affected"
+msgid "Post excluded from SuggestReview."
+msgid_plural "%s posts excluded from SuggestReview."
+msgstr[0] ""
+msgstr[1] ""
+
+#: suggest-review.php:394
+msgid "Settings Updated."
+msgstr ""
+
+#: suggest-review.php:402
+msgid "Suggest Review Options"
+msgstr ""
+
+#: suggest-review.php:404
+msgctxt "Option on setting page"
+msgid "Allow unregistered users to mark for review"
+msgstr ""
+
+#: suggest-review.php:405 suggest-review.php:408 suggest-review.php:419
+#: suggest-review.php:425 suggest-review.php:662
+msgid "Yes"
+msgstr ""
+
+#: suggest-review.php:405 suggest-review.php:408 suggest-review.php:419
+#: suggest-review.php:425 suggest-review.php:663
+msgid "No"
+msgstr ""
+
+#: suggest-review.php:407
+msgctxt "Option on setting page"
+msgid "Send email to author when content is marked for review"
+msgstr ""
+
+#: suggest-review.php:410
+msgctxt "Option on setting page"
+msgid "Subject line for email to author"
+msgstr ""
+
+#: suggest-review.php:411 suggest-review.php:415
+msgctxt "Help text on setting page"
+msgid "Supports limited variables which are case sensitive."
+msgstr ""
+
+#: suggest-review.php:411 suggest-review.php:415 suggest-review.php:442
+#: suggest-review.php:446
+msgid "Legend"
+msgstr ""
+
+#: suggest-review.php:414
+msgctxt "Option on setting page"
+msgid "Body for email to author"
+msgstr ""
+
+#: suggest-review.php:418
+msgctxt "Option on setting page"
+msgid "Add last update date to end of posts"
+msgstr ""
+
+#: suggest-review.php:419
+msgid "Yes, if not in exclusion list"
+msgstr ""
+
+#: suggest-review.php:421
+msgctxt "Option on setting page"
+msgid "Footer alignment"
+msgstr ""
+
+#: suggest-review.php:422
+msgctxt "Help text on setting page"
+msgid "Affects last update date and flag button."
+msgstr ""
+
+#: suggest-review.php:422
+msgid "Left"
+msgstr ""
+
+#: suggest-review.php:422
+msgid "Center"
+msgstr ""
+
+#: suggest-review.php:422
+msgid "Right"
+msgstr ""
+
+#: suggest-review.php:424
+msgctxt "Option on setting page"
+msgid "Show comment on post when flagged"
+msgstr ""
+
+#: suggest-review.php:427
+msgctxt "Option on setting page"
+msgid "Flag button text"
+msgstr ""
+
+#: suggest-review.php:430
+msgctxt "Option on setting page"
+msgid "Page, post IDs to exclude"
+msgstr ""
+
+#: suggest-review.php:431
+msgctxt "Help text on setting page"
+msgid ""
+"This is the comma-separated list of IDs that will not show the suggest "
+"review button. The \"last update\" text will still show, depending on the "
+"above option."
+msgstr ""
+
+#: suggest-review.php:434
+msgctxt "Option on setting page"
+msgid "Addresses for digest email"
+msgstr ""
+
+#: suggest-review.php:435
+msgctxt "Help text on setting page"
+msgid ""
+"This is the comma-separated list of addresses that will receive weekly "
+"emails about what content has been flagged for review."
+msgstr ""
+
+#: suggest-review.php:438
+msgctxt "Option on setting page"
+msgid "Subject line for digest email"
+msgstr ""
+
+#: suggest-review.php:441
+msgctxt "Option on setting page"
+msgid "Body for digest email"
+msgstr ""
+
+#: suggest-review.php:442
+msgctxt "Help text on setting page"
+msgid ""
+"A blank line will be inserted after this and before the post items. Supports "
+"limited variables which are case sensitive."
+msgstr ""
+
+#: suggest-review.php:445
+msgctxt "Option on setting page"
+msgid "Post items for digest email body"
+msgstr ""
+
+#: suggest-review.php:446
+msgctxt "Help text on setting page"
+msgid ""
+"Each item marked for review will appear after the \"Body for digest email\". "
+"A blank line will separate each item. Supports limited variables which are "
+"case sensitive."
+msgstr ""
+
+#: suggest-review.php:450
+msgctxt "Save button on setting page"
+msgid "Update Settings"
+msgstr ""
+
+#: suggest-review.php:453
+msgid "Like it? Hate it? Give it a review!"
+msgstr ""
+
+#: suggest-review.php:458
+msgctxt "Title of variable legend column on settings page"
+msgid "Variable Legend"
+msgstr ""
+
+#: suggest-review.php:459
+msgid "Hide"
+msgstr ""
+
+#: suggest-review.php:462
+msgctxt "Discription of variable on settings page"
+msgid "The login name of the user who flagged the item"
+msgstr ""
+
+#: suggest-review.php:463 suggest-review.php:791
+msgctxt "Variable name for suggesting users email address"
+msgid "suggesting_user_email"
+msgstr ""
+
+#: suggest-review.php:463
+msgctxt "Discription of variable on settings page"
+msgid "The email address of the user who flagged the item"
+msgstr ""
+
+#: suggest-review.php:464 suggest-review.php:792
+msgctxt "Variable name for suggesting users first (given) name"
+msgid "suggesting_user_firstname"
+msgstr ""
+
+#: suggest-review.php:464
+msgctxt "Discription of variable on settings page"
+msgid "The first name of the user who flagged the item"
+msgstr ""
+
+#: suggest-review.php:465 suggest-review.php:793
+msgctxt "Variable name for suggesting users last (sur) name"
+msgid "suggesting_user_lastname"
+msgstr ""
+
+#: suggest-review.php:465
+msgctxt "Discription of variable on settings page"
+msgid "The last name of the user who flagged the item"
+msgstr ""
+
+#: suggest-review.php:466 suggest-review.php:794
+msgctxt "Variable name for suggesting users display name"
+msgid "suggesting_user_display_name"
+msgstr ""
+
+#: suggest-review.php:466
+msgctxt "Discription of variable on settings page"
+msgid "The display name of the user who flagged the item"
+msgstr ""
+
+#: suggest-review.php:467
+msgctxt "Discription of variable on settings page"
+msgid "The comment from the user who flagged the item"
+msgstr ""
+
+#: suggest-review.php:468
+msgctxt "Discription of variable on settings page"
+msgid "The login name of the post author"
+msgstr ""
+
+#: suggest-review.php:469 suggest-review.php:796
+msgctxt "Variable name for post authors email address"
+msgid "author_email"
+msgstr ""
+
+#: suggest-review.php:469
+msgctxt "Discription of variable on settings page"
+msgid "The email address of the post author"
+msgstr ""
+
+#: suggest-review.php:470 suggest-review.php:797
+msgctxt "Variable name for post authors first (given) name"
+msgid "author_firstname"
+msgstr ""
+
+#: suggest-review.php:470
+msgctxt "Discription of variable on settings page"
+msgid "The first name of the post author"
+msgstr ""
+
+#: suggest-review.php:471 suggest-review.php:798
+msgctxt "Variable name for post authors last (sur) name"
+msgid "author_lastname"
+msgstr ""
+
+#: suggest-review.php:471
+msgctxt "Discription of variable on settings page"
+msgid "The last name of the post author"
+msgstr ""
+
+#: suggest-review.php:472 suggest-review.php:799
+msgctxt "Variable name for post authors display name"
+msgid "author_display_name"
+msgstr ""
+
+#: suggest-review.php:472
+msgctxt "Discription of variable on settings page"
+msgid "The display name of the post author"
+msgstr ""
+
+#: suggest-review.php:473
+msgctxt "Discription of variable on settings page"
+msgid "The title of the post"
+msgstr ""
+
+#: suggest-review.php:474 suggest-review.php:801
+msgctxt "Variable name for posts original publish date"
+msgid "post_date"
+msgstr ""
+
+#: suggest-review.php:474
+msgctxt "Discription of variable on settings page"
+msgid "The original publish date of the post"
+msgstr ""
+
+#: suggest-review.php:475
+msgctxt "Discription of variable on settings page"
+msgid "The last modified date of the post"
+msgstr ""
+
+#: suggest-review.php:476
+msgctxt "Discription of variable on settings page"
+msgid "The permalink to the post"
+msgstr ""
+
+#: suggest-review.php:554 suggest-review.php:582
+msgctxt "Title text for flagged posts table"
+msgid "Posts Flagged for Review"
+msgstr ""
+
+#: suggest-review.php:555
+msgctxt "Helper text for flagged posts table"
+msgid ""
+"This page lists all of the posts you have access to that have been suggested "
+"for a review of their content."
+msgstr ""
+
+#: suggest-review.php:559
+msgctxt "Column header on flagged posts table"
+msgid "Title"
+msgstr ""
+
+#: suggest-review.php:560
+msgctxt "Column header on flagged posts table"
+msgid "Author"
+msgstr ""
+
+#: suggest-review.php:561
+msgctxt "Column header on flagged posts table"
+msgid "Post Date"
+msgstr ""
+
+#: suggest-review.php:562
+msgctxt "Column header on flagged posts table"
+msgid "Flagged By"
+msgstr ""
+
+#: suggest-review.php:563
+msgctxt "Column header on flagged posts table"
+msgid "Flagged On"
+msgstr ""
+
+#: suggest-review.php:583
+msgctxt "suggest-review"
+msgid "No posts have been flagged for review."
+msgstr ""
+
+#: suggest-review.php:594 suggest-review.php:602
+msgctxt "Title for settings page"
+msgid "Suggest Review Settings"
+msgstr ""
+
+#: suggest-review.php:603
+msgctxt "Text for link to settings in settings submenu"
+msgid "Settings"
+msgstr ""
+
+#: suggest-review.php:609
+msgctxt "Title for admin flagged posts page"
+msgid "Posts Suggested for Review"
+msgstr ""
+
+#: suggest-review.php:610
+msgctxt "Text for link to admin flagged posts page in settings submenu"
+msgid "Flagged Posts"
+msgstr ""
+
+#: suggest-review.php:616
+msgctxt "Title for non-admin flagged posts page"
+msgid "Posts Suggested for Review"
+msgstr ""
+
+#: suggest-review.php:617
+msgctxt "Text for link to non-admin flagged posts page in dashboard menu"
+msgid "SR Flagged Posts"
+msgstr ""
+
+#: suggest-review.php:636
+msgctxt "Title of meta box when editing post"
+msgid "Resolve Suggest Review Flag"
+msgstr ""
+
+#: suggest-review.php:650
+msgctxt ""
+"Text to display in meta box when editing a flagged post. Variable 1 is "
+"suggesting users login name. Variable 2 is date of flag."
+msgid "Review suggested by %1$s on %2$s"
+msgstr ""
+
+#: suggest-review.php:655
+msgctxt "Checkbox in meta box when editing a flagged post"
+msgid "Remove this flag"
+msgstr ""
+
+#: suggest-review.php:657
+msgctxt "Displayed in meta box when editing a post that has not been flagged"
+msgid "This post has not been suggested for review."
+msgstr ""
+
+#: suggest-review.php:662
+msgctxt "Displayed in meta box when editing a post"
+msgid "Exclude from SR?"
+msgstr ""
+
+#: suggest-review.php:713
+msgctxt "Description of the digest email schedule"
+msgid "Once Weekly"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Suggest Review"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/plugins/suggest-review/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Lets users suggest that content may need to be reviewed or re-examined."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Michael George"
+msgstr ""
